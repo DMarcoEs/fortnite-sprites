@@ -1,26 +1,31 @@
 // Vista de comparacion: mi coleccion vs. la de un amigo, todo en el navegador.
+//
+// El codigo del amigo viaja en el fragmento de la URL (despues del #), que los
+// navegadores NO mandan al servidor. Ni GitHub ve que sprites tienen.
+// Esta vista solo lee: nunca escribe sobre tu coleccion.
 
 import { loadCatalog } from './catalog.js';
 import * as store from './store.js';
 import { OWNED } from './store.js';
 import { encodeCollection, decodeCollection, buildShareUrl, codeFromLocation } from './share.js';
-import { toast } from './render.js';
+import { toast, el, thumb } from './render.js';
 import { pct } from './filters.js';
 
 const $ = sel => document.querySelector(sel);
 
-const el = (tag, props = {}, children = []) => {
-  const node = Object.assign(document.createElement(tag), props);
-  for (const c of [].concat(children)) if (c != null) node.append(c);
-  return node;
-};
-
 const BUCKETS = [
-  { id: 'mine',   title: '✅ Solo yo lo tengo',    hint: 'Presume estos.' },
-  { id: 'theirs', title: '🔥 Solo él lo tiene',    hint: 'Estos te faltan a ti.' },
-  { id: 'both',   title: '🤝 Los dos lo tenemos',  hint: '' },
-  { id: 'none',   title: '❌ Ninguno lo tiene',    hint: 'A cazar juntos.' },
+  { id: 'mine',   title: '✅ Solo yo lo tengo',   hint: 'Presume estos.' },
+  { id: 'theirs', title: '🔥 Solo él lo tiene',   hint: 'Estos te faltan a ti.' },
+  { id: 'both',   title: '🤝 Los dos lo tenemos', hint: '' },
+  { id: 'none',   title: '❌ Ninguno lo tiene',   hint: 'A cazar juntos.' },
 ];
+
+function fraction(num, den) {
+  return el('div', { className: 'stat-value' }, [
+    document.createTextNode(String(num)),
+    el('span', { className: 'den', textContent: ` / ${den}` }),
+  ]);
+}
 
 async function copy(text, okMessage) {
   try {
@@ -45,7 +50,7 @@ async function main() {
   store.loadState();
   $('#my-code').value = encodeCollection(catalog, store.getStatus);
 
-  // --- Amigos guardados ---
+  // ---------- Amigos guardados ----------
   function refreshFriends() {
     const friends = store.loadState().friends;
     const select = $('#saved-friends');
@@ -71,14 +76,13 @@ async function main() {
     toast(`${name} guardado`);
   });
 
-  // --- Comparacion ---
+  // ---------- Comparacion ----------
   let lastResult = null;
 
   function compare() {
-    const input = $('#their-code').value;
     let decoded;
     try {
-      decoded = decodeCollection(catalog, input);
+      decoded = decodeCollection(catalog, $('#their-code').value);
     } catch (err) {
       toast(err.message, true);
       return;
@@ -107,35 +111,30 @@ async function main() {
     const total = catalog.totalReleased;
     const myCount = groups.mine.length + groups.both.length;
     const theirCount = groups.theirs.length + groups.both.length;
+    const diff = myCount - theirCount;
 
     $('#summary').replaceChildren(
       el('div', { className: 'stat' }, [
         el('div', { className: 'stat-label', textContent: 'Tu coleccion' }),
-        el('div', { className: 'stat-value', innerHTML: `${myCount}<small> / ${total}</small>` }),
+        fraction(myCount, total),
         el('div', { className: 'bar' }, [el('i', { style: `width:${pct(myCount, total)}%` })]),
       ]),
       el('div', { className: 'stat' }, [
         el('div', { className: 'stat-label', textContent: friend }),
-        el('div', { className: 'stat-value', innerHTML: `${theirCount}<small> / ${total}</small>` }),
+        fraction(theirCount, total),
         el('div', { className: 'bar' }, [el('i', { style: `width:${pct(theirCount, total)}%; background:var(--warn)` })]),
       ]),
       el('div', { className: 'stat' }, [
         el('div', { className: 'stat-label', textContent: 'Diferencia' }),
-        el('div', {
-          className: 'stat-value',
-          textContent: myCount === theirCount ? 'Empate' : `${myCount > theirCount ? '+' : ''}${myCount - theirCount}`,
-        }),
+        el('div', { className: 'stat-value', textContent: diff === 0 ? 'Empate' : `${diff > 0 ? '+' : ''}${diff}` }),
         el('div', {
           className: 'stat-sub',
-          textContent: myCount === theirCount ? 'Van iguales' : myCount > theirCount ? 'Vas ganando' : 'Vas abajo',
+          textContent: diff === 0 ? 'Van iguales' : diff > 0 ? 'Vas ganando' : 'Vas abajo',
         }),
       ]),
       el('div', { className: 'stat' }, [
         el('div', { className: 'stat-label', textContent: 'Entre los dos' }),
-        el('div', {
-          className: 'stat-value',
-          innerHTML: `${total - groups.none.length}<small> / ${total}</small>`,
-        }),
+        fraction(total - groups.none.length, total),
         el('div', { className: 'stat-sub', textContent: `Les faltan ${groups.none.length} a ambos` }),
       ]),
     );
@@ -147,9 +146,10 @@ async function main() {
           el('span', { textContent: b.title }),
           el('span', { className: 'count', textContent: String(list.length) }),
         ]),
-        b.hint ? el('div', { style: 'font-size:.78rem;color:var(--text-mute)', textContent: b.hint }) : null,
+        b.hint ? el('div', { style: 'font-size:.77rem;color:var(--text-mute)', textContent: b.hint }) : null,
         list.length
           ? el('ul', {}, list.map(e => el('li', {}, [
+              thumb(e),
               el('span', { textContent: e.sprite.name.replace(' Sprite', '') }),
               el('span', { className: 'v', textContent: e.variant.name, style: `color:${e.variant.color}` }),
             ])))

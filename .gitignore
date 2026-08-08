@@ -1,8 +1,8 @@
 .vscode/
 .claude/
-__test.html
-__seed.html
 .DS_Store
 Thumbs.db
 *.log
+
+# respaldos exportados desde el propio sitio
 fnsprites-*.json

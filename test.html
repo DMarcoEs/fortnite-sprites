@@ -1,0 +1,228 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>test</title></head><body>
+<pre id="out">corriendo…</pre>
+<script type="module">
+import { loadCatalog } from './js/catalog.js';
+import * as store from './js/store.js';
+import { OWNED, MASTERED, NONE } from './js/store.js';
+import { encodeCollection, decodeCollection, buildShareUrl } from './js/share.js';
+import { computeStats, filterEntries, groupEntries, defaultFilters } from './js/filters.js';
+
+const log = [];
+let pass = 0, fail = 0;
+const out = document.getElementById('out');
+// Se vuelca en cada paso: si algo se cuelga, se ve exactamente donde.
+const flush = () => { out.textContent = log.join('\n'); };
+const check = (name, cond, extra = '') => {
+  (cond ? pass++ : fail++);
+  log.push(`${cond ? 'PASS ' : 'FALLO'}  ${name}${extra ? '  ->  ' + extra : ''}`);
+  flush();
+};
+const section = t => { log.push('', `--- ${t} ---`); flush(); };
+window.addEventListener('error', e => { log.push('ERROR GLOBAL: ' + e.message); flush(); });
+window.addEventListener('unhandledrejection', e => { log.push('PROMESA RECHAZADA: ' + e.reason?.message); flush(); });
+const b64url = b => btoa(String.fromCharCode(...b)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const file = (obj, name = 'b.json') =>
+  new File([typeof obj === 'string' ? obj : JSON.stringify(obj)], name, { type: 'application/json' });
+
+// SEGURO: la suite pisa el estado guardado mientras corre. Se respalda antes y se
+// devuelve al terminar (y tambien si cierras la pestana a media prueba), para que
+// abrir esta pagina nunca te borre la coleccion de verdad.
+const KEY = 'fnsprites.v1';
+const BACKUP = localStorage.getItem(KEY);
+const restore = () => {
+  if (BACKUP === null) localStorage.removeItem(KEY); else localStorage.setItem(KEY, BACKUP);
+};
+window.addEventListener('beforeunload', restore);
+
+try {
+  const cat = await loadCatalog();
+  localStorage.removeItem(KEY);
+  store.loadState();
+  const validKeys = new Set(cat.byKey.keys());
+
+  section('catalogo');
+  check('30 sprites', cat.sprites.length === 30, cat.sprites.length);
+  check('139 entradas totales', cat.totalAll === 139, cat.totalAll);
+  check('127 lanzadas', cat.totalReleased === 127, cat.totalReleased);
+  check('12 anunciadas sin lanzar', cat.totalAll - cat.totalReleased === 12);
+  check('catalogVersion = 2', cat.catalogVersion === 2, cat.catalogVersion);
+  check('punk:gem sigue sin lanzar', cat.byKey.get('punk:gem').released === false);
+  check('fire:gem existe y no ha salido', cat.byKey.get('fire:gem')?.released === false);
+  check('fishy:holofoil existe y esta lanzada', cat.byKey.get('fishy:holofoil')?.released === true);
+  check('sprites de Override presentes', ['xray','pond','honey','dumpster','bullet']
+        .every(id => cat.byKey.get(`${id}:base`)?.released === false));
+
+  section('codeOrder — el invariante critico');
+  check('codeIndex y flat tienen el mismo tamano', cat.codeIndex.length === cat.flat.length);
+  const setCode = new Set(cat.codeIndex.map(e => e.key));
+  const setFlat = new Set(cat.flat.map(e => e.key));
+  check('mismo conjunto de claves en ambos ordenes',
+        setCode.size === setFlat.size && [...setFlat].every(k => setCode.has(k)));
+  check('sin duplicados en codeIndex', setCode.size === cat.codeIndex.length);
+  check('el orden de presentacion SI difiere del de codificacion',
+        cat.flat.findIndex(e => e.key === 'fire:gem') !== cat.codeIndex.findIndex(e => e.key === 'fire:gem'),
+        `flat #${cat.flat.findIndex(e=>e.key==='fire:gem')} vs code #${cat.codeIndex.findIndex(e=>e.key==='fire:gem')}`);
+
+  section('coleccion de prueba');
+  const marked = [
+    ['water:base', MASTERED], ['water:gold', OWNED], ['zero-point:quack', MASTERED],
+    ['john-wick:base', OWNED], ['grim:cube', OWNED], ['punk:cube', MASTERED],
+    ['air:holofoil', OWNED], ['boss:base', MASTERED], ['fishy:holofoil', OWNED],
+    ['peeky-peely:cube', MASTERED],
+  ];
+  for (const [k, s] of marked) store.setStatus(k, s);
+
+  check('estado inicial NONE -> ciclo 1/2/3', (() => {
+    const k = 'demon:gold';
+    return store.cycleStatus(k) === OWNED && store.cycleStatus(k) === MASTERED && store.cycleStatus(k) === NONE;
+  })());
+  check('fecha automatica al obtener', /^\d{4}-\d{2}-\d{2}$/.test(store.getEntry('water:base').date),
+        store.getEntry('water:base').date);
+
+  const stats = computeStats(cat, store.getStatus);
+  check('stats: 10 obtenidas de 127', stats.collection.owned === 10 && stats.collection.total === 127,
+        `${stats.collection.owned}/${stats.collection.total}`);
+  check('stats: 5 masterizadas', stats.collection.mastered === 5, stats.collection.mastered);
+  check('stats: mastery de sprites = 2', stats.masteredSprites === 2, stats.masteredSprites);
+  check('stats: las no lanzadas no cuentan en el total',
+        [...stats.byVariant.values()].reduce((a, b) => a + b.total, 0) === 127);
+
+  section('codigo para compartir');
+  const code = encodeCollection(cat, store.getStatus);
+  check('codigo mide 49 caracteres', code.length === 49, `${code.length}: ${code}`);
+  check('lleva el prefijo de version 2', code.startsWith('2.'));
+  const { statuses } = decodeCollection(cat, code);
+  check('round-trip exacto en las 139 entradas',
+        cat.flat.every(e => statuses.get(e.key) === store.getStatus(e.key)));
+  check('acepta el link completo pegado',
+        decodeCollection(cat, buildShareUrl(code)).statuses.get('water:base') === MASTERED);
+
+  section('compatibilidad hacia atras (la prueba que justifica codeOrder)');
+  // Se fabrica un codigo "de la epoca v1", cuando el catalogo tenia 118 entradas
+  // y ni fire:gem ni los sprites de Override existian.
+  const OLD_N = 118;
+  const oldBytes = new Uint8Array(Math.ceil(OLD_N * 2 / 8));
+  cat.codeIndex.slice(0, OLD_N).forEach((e, i) => {
+    const bit = i * 2;
+    oldBytes[bit >> 3] |= store.getStatus(e.key) << (bit & 7);
+  });
+  const oldCode = `1.${b64url(oldBytes)}`;
+  check('el codigo viejo es mas corto', oldCode.length < code.length, `${oldCode.length} vs ${code.length}`);
+  const oldDec = decodeCollection(cat, oldCode);
+  check('un codigo viejo decodifica IDENTICO las 118 entradas que ya existian',
+        cat.codeIndex.slice(0, OLD_N).every(e => oldDec.statuses.get(e.key) === store.getStatus(e.key)));
+  check('y las 21 entradas nuevas salen como "no la tengo"',
+        cat.codeIndex.slice(OLD_N).every(e => oldDec.statuses.get(e.key) === NONE));
+  check('en particular fishy:holofoil (marcada hoy) sale NONE en el codigo viejo',
+        oldDec.statuses.get('fishy:holofoil') === NONE);
+
+  section('codigos invalidos');
+  for (const bad of ['basura', '2.@@@@', '', 'AbC123', '2.' + 'A'.repeat(500)]) {
+    let threw = false;
+    try { decodeCollection(cat, bad); } catch { threw = true; }
+    check(`"${bad.slice(0, 14)}${bad.length > 14 ? '…' : ''}" lanza error legible`, threw);
+  }
+
+  section('comparacion');
+  const friend = new Map(cat.flat.map(e => [e.key, NONE]));
+  friend.set('water:base', OWNED); friend.set('earth:base', OWNED); friend.set('fire:base', MASTERED);
+  const b = { mine: 0, theirs: 0, both: 0, none: 0 };
+  for (const e of cat.flat) {
+    if (!e.released) continue;
+    const m = store.getStatus(e.key) >= OWNED, t = (friend.get(e.key) ?? 0) >= OWNED;
+    b[m && t ? 'both' : m ? 'mine' : t ? 'theirs' : 'none']++;
+  }
+  check('1 en "ambos"', b.both === 1, b.both);
+  check('9 solo mios', b.mine === 9, b.mine);
+  check('2 solo suyos', b.theirs === 2, b.theirs);
+  check('los 4 grupos suman 127', b.mine + b.theirs + b.both + b.none === 127);
+
+  section('filtros');
+  const f = defaultFilters();
+  const ctx = { getStatus: store.getStatus, isHunted: store.isHunted };
+  f.search = 'grim';
+  check('buscar "grim" deja solo Grim Reaper',
+        new Set(filterEntries(cat, f, ctx).map(e => e.spriteId)).size === 1);
+  f.search = ''; f.rarity = 'mythic';
+  check('filtro Mythic da 32', filterEntries(cat, f, ctx).length === 32, filterEntries(cat, f, ctx).length);
+  f.rarity = 'all'; f.season = 'c7s4';
+  check('filtro temporada Override da 5', filterEntries(cat, f, ctx).length === 5, filterEntries(cat, f, ctx).length);
+  f.season = 'all'; f.status = 'owned';
+  check('filtro "ya los tengo" da 10', filterEntries(cat, f, ctx).length === 10, filterEntries(cat, f, ctx).length);
+  f.status = 'all'; f.variant = 'gem';
+  check('filtro variante Gem da 19', filterEntries(cat, f, ctx).length === 19, filterEntries(cat, f, ctx).length);
+  f.variant = 'all'; f.groupBy = 'rarity';
+  check('agrupar por rareza da 4 grupos', groupEntries(cat, filterEntries(cat, f, ctx), f).length === 4);
+  f.groupBy = 'variant';
+  check('agrupar por variante da 8 grupos', groupEntries(cat, filterEntries(cat, f, ctx), f).length === 8);
+  f.groupBy = 'sprite';
+  check('agrupar por sprite da 30 grupos', groupEntries(cat, filterEntries(cat, f, ctx), f).length === 30);
+
+  section('hunt list');
+  store.toggleHunt('demon:gem');
+  check('se agrega', store.isHunted('demon:gem'));
+  store.setStatus('demon:gem', OWNED);
+  check('obtenerlo lo saca de la lista', !store.isHunted('demon:gem'));
+
+  section('respaldo e import saneado');
+  const snapshot = JSON.stringify(store.loadState());
+  const expected = encodeCollection(cat, store.getStatus);
+  store.resetAll();
+  check('reset deja la coleccion en 0', computeStats(cat, store.getStatus).collection.owned === 0);
+  const r1 = await store.importJSON(file(snapshot), validKeys);
+  check('importar restaura 11 entradas', r1.importadas === 11, JSON.stringify(r1));
+  check('importar reproduce el codigo identico', encodeCollection(cat, store.getStatus) === expected);
+
+  const r2 = await store.importJSON(file({ entries: {
+    'water:base': { status: 1 },
+    'sprite:inventado': { status: 1 },
+    'water:gold': { status: 99 },
+    'water:gummy': { status: -1 },
+    'fire:base': 'no soy un objeto',
+    'earth:base': { status: 2, date: 'no-es-fecha', note: 'x'.repeat(9000) },
+  } }), validKeys);
+  check('descarta claves inventadas y estados invalidos',
+        r2.importadas === 2 && r2.descartadas === 4, JSON.stringify(r2));
+  check('sanea una fecha invalida', store.getEntry('earth:base').date === '');
+  check('recorta notas larguisimas', store.getEntry('earth:base').note.length === 500);
+
+  for (const [nombre, bad] of [
+    ['JSON roto', file('{no soy json')],
+    ['sin entries', file({ hola: 1 })],
+    ['entries nulo', file({ entries: null })],
+  ]) {
+    let threw = false;
+    try { await store.importJSON(bad, validKeys); } catch { threw = true; }
+    check(`rechaza ${nombre}`, threw);
+  }
+  let tooBig = false;
+  try {
+    await store.importJSON(new File(['x'.repeat(1024 * 1024 + 10)], 'big.json'), validKeys);
+  } catch { tooBig = true; }
+  check('rechaza archivos de mas de 1 MB', tooBig);
+
+  section('imagenes');
+  check('toda entrada tiene ruta de imagen',
+        cat.flat.every(e => e.img === `img/sprites/${e.spriteId}-${e.variantId}.png`));
+  const exists = n => fetch(`img/sprites/${n}.png`).then(r => r.ok).catch(() => false);
+  const hay = await Promise.all(['water-gold', 'grim-base', 'zero-point-quack', 'bullet-base'].map(exists));
+  check('las imagenes descargadas existen', hay.every(Boolean), hay.join(', '));
+  // Estas 12 el repo de referencia aun no las publica: deben caer al fallback, no romper.
+  const faltan = await Promise.all(['fishy-holofoil', 'aura-holofoil', 'batman-gem'].map(exists));
+  check('las que faltan devuelven 404 (activan el fallback)', faltan.every(x => x === false), faltan.join(', '));
+  const totalImgs = (await Promise.all(cat.flat.map(e => exists(`${e.spriteId}-${e.variantId}`)))).filter(Boolean).length;
+  check('127 de 139 entradas tienen imagen', totalImgs === 127, totalImgs);
+
+} catch (err) {
+  fail++;
+  log.push('EXCEPCION: ' + err.message + '\n' + err.stack);
+} finally {
+  restore();
+}
+
+log.push('', `===== ${pass} pasaron, ${fail} fallaron =====`,
+  BACKUP === null ? 'No habia coleccion guardada; nada que restaurar.'
+                  : 'Tu coleccion real quedo intacta (respaldada y restaurada).');
+flush();
+</script>
+</body></html>

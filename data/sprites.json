@@ -1,23 +1,23 @@
 {
-  "catalogVersion": 1,
-  "_leeme": "ARCHIVO APPEND-ONLY. Nunca renombres, reordenes ni borres un 'id' existente: los codigos para compartir dependen del orden. Para actualizar solo AGREGA al final de 'variants' y de 'sprites'. Ver README.md.",
+  "catalogVersion": 2,
+  "_leeme": "NO reordenes ni borres nada de 'codeOrder': define el codigo para compartir y es APPEND-ONLY. El orden de 'sprites' solo afecta la presentacion y si se puede cambiar. Ver docs/catalogo.md.",
 
   "variants": [
-    { "id": "base",     "name": "Base",     "bonus": "La habilidad propia del Sprite",            "color": "#9aa4b2" },
-    { "id": "gold",     "name": "Gold",     "bonus": "3x XP de Sprite por eliminacion",           "color": "#f2b134" },
-    { "id": "gummy",    "name": "Gummy",    "bonus": "Polvo de Sprite extra al extraer",          "color": "#ff6bb5" },
-    { "id": "galaxy",   "name": "Galaxy",   "bonus": "+30% de municion en contenedores",          "color": "#8b6bff" },
-    { "id": "holofoil", "name": "Holofoil", "bonus": "Mejora la suerte de variantes raras del escuadron", "color": "#3ddbd9" },
-    { "id": "gem",      "name": "Gem",      "bonus": "Solo cosmetico: conserva la habilidad Base", "color": "#5ec8f2" },
-    { "id": "cube",     "name": "Cube",     "bonus": "Solo cosmetico: conserva la habilidad Base", "color": "#c04cff" },
-    { "id": "quack",    "name": "Quack",    "bonus": "Solo cosmetico: conserva la habilidad Base", "color": "#ffd24a" }
+    { "id": "base",      "name": "Base",      "color": "#8b95a7", "color2": "#5a6478", "bonus": "La habilidad propia del Sprite" },
+    { "id": "gold",      "name": "Gold",      "color": "#f5c542", "color2": "#a8760b", "bonus": "3x XP de Sprite por eliminacion" },
+    { "id": "gummy",     "name": "Gummy",     "color": "#ff6bb5", "color2": "#c42d78", "bonus": "Polvo de Sprite extra al extraer" },
+    { "id": "galaxy",    "name": "Galaxy",    "color": "#9b7bff", "color2": "#3a2a80", "bonus": "+30% de municion en contenedores" },
+    { "id": "holofoil",  "name": "Holofoil",  "color": "#3ddbd9", "color2": "#a55cff", "bonus": "Mejora la suerte de variantes raras del escuadron" },
+    { "id": "gem",       "name": "Gem",       "color": "#5ec8f2", "color2": "#1a6a9e", "bonus": "Solo cosmetico: conserva la habilidad Base" },
+    { "id": "cube",      "name": "Cube",      "color": "#c04cff", "color2": "#5a1a8a", "bonus": "Solo cosmetico: conserva la habilidad Base" },
+    { "id": "quack",     "name": "Quack",     "color": "#ffd24a", "color2": "#d1830f", "bonus": "Solo cosmetico: conserva la habilidad Base" }
   ],
 
   "rarities": [
-    { "id": "rare",      "name": "Rare",      "color": "#3d8bfd", "order": 1 },
-    { "id": "epic",      "name": "Epic",      "color": "#a855f7", "order": 2 },
-    { "id": "legendary", "name": "Legendary", "color": "#f97316", "order": 3 },
-    { "id": "mythic",    "name": "Mythic",    "color": "#facc15", "order": 4 }
+    { "id": "rare",       "name": "Rare",       "color": "#3d8bfd", "order": 1 },
+    { "id": "epic",       "name": "Epic",       "color": "#a855f7", "order": 2 },
+    { "id": "legendary",  "name": "Legendary",  "color": "#f97316", "order": 3 },
+    { "id": "mythic",     "name": "Mythic",     "color": "#facc15", "order": 4 }
   ],
 
   "seasons": [
@@ -39,19 +39,20 @@
     {
       "id": "fire", "name": "Fire Sprite", "rarity": "rare", "season": "c7s3",
       "ability": "Libera una explosion de fuego tras infligir suficiente dano.",
-      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "cube", "quack"]
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem", "cube", "quack"],
+      "unreleased": ["gem"]
     },
     {
       "id": "fishy", "name": "Fishy Sprite", "rarity": "rare", "season": "c7s3",
       "ability": "Aumenta la velocidad de nado y da impulso de movimiento al recibir disparos.",
-      "variants": ["base", "gold", "gummy", "galaxy", "cube"]
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem", "cube"]
     },
     {
       "id": "air", "name": "Air Sprite", "rarity": "rare", "season": "c7s3",
       "ability": "Aumenta la velocidad de sprint y la altura de salto.",
-      "variants": ["base", "gold", "gummy", "galaxy", "holofoil"]
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem"],
+      "unreleased": ["gem"]
     },
-
     {
       "id": "duck", "name": "Duck Sprite", "rarity": "epic", "season": "c7s3",
       "ability": "Emotear y tocar musica recupera escudo.",
@@ -60,7 +61,8 @@
     {
       "id": "ghost", "name": "Ghost Sprite", "rarity": "epic", "season": "c7s3",
       "ability": "Te vuelve invisible un momento despues de recargar.",
-      "variants": ["base", "gold", "gummy", "galaxy", "holofoil"]
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem"],
+      "unreleased": ["gem"]
     },
     {
       "id": "demon", "name": "Demon Sprite", "rarity": "epic", "season": "c7s3",
@@ -75,18 +77,18 @@
     {
       "id": "aura", "name": "Aura Sprite", "rarity": "epic", "season": "c7s3",
       "ability": "Otorga una carga de Roca Electrica tras infligir suficiente dano.",
-      "variants": ["base", "gold", "gummy", "galaxy", "gem"]
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem"]
     },
     {
       "id": "striker", "name": "Striker Sprite", "rarity": "epic", "season": "c7s3",
       "ability": "Activa Sobrecarga despues de escalar o saltar obstaculos.",
-      "variants": ["base", "gold", "gummy", "galaxy", "holofoil"]
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem"]
     },
-
     {
       "id": "dream", "name": "Dream Sprite", "rarity": "legendary", "season": "c7s3",
       "ability": "Da un objeto aleatorio en cada nivel, con mejor botin al nivel maximo.",
-      "variants": ["base", "gold", "gummy", "galaxy", "cube"]
+      "variants": ["base", "gold", "gummy", "galaxy", "gem", "cube"],
+      "unreleased": ["gem"]
     },
     {
       "id": "punk", "name": "Punk Sprite", "rarity": "legendary", "season": "c7s3",
@@ -97,24 +99,25 @@
     {
       "id": "boss", "name": "Boss Sprite", "rarity": "legendary", "season": "c7s3",
       "ability": "Aumenta tu Vida y Escudo maximos.",
-      "variants": ["base", "gold", "gummy", "galaxy", "cube"]
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem", "cube"],
+      "unreleased": ["gem"]
     },
     {
       "id": "seven", "name": "Seven Sprite", "rarity": "legendary", "season": "c7s3",
       "ability": "Revela las huellas de los enemigos a todo tu escuadron.",
-      "variants": ["base", "gold", "gummy", "galaxy", "holofoil"]
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem"],
+      "unreleased": ["gem"]
     },
     {
       "id": "lootin-llama", "name": "Lootin' Llama Sprite", "rarity": "legendary", "season": "c7s3",
       "ability": "Abrir cajas de municion tiene probabilidad de mejorar tu arma.",
-      "variants": ["base", "gold", "gummy", "galaxy", "gem"]
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem", "cube"]
     },
     {
       "id": "peeky-peely", "name": "Peeky Peely Sprite", "rarity": "legendary", "season": "c7s3",
       "ability": "Marca variantes raras y enemigos cercanos, pero tambien revela tu posicion.",
-      "variants": ["base", "gold", "gummy", "galaxy", "holofoil"]
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem", "cube"]
     },
-
     {
       "id": "grim", "name": "Grim Reaper Sprite", "rarity": "mythic", "season": "c7s3",
       "ability": "Marca a los jugadores que te hacen dano.",
@@ -133,7 +136,7 @@
     {
       "id": "batman", "name": "Batman Sprite", "rarity": "mythic", "season": "c7s3",
       "ability": "Habilidad sin confirmar dentro del juego.",
-      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "cube"]
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem", "cube"]
     },
     {
       "id": "pollo", "name": "Pollo Sprite", "rarity": "mythic", "season": "c7s3",
@@ -154,6 +157,63 @@
       "id": "john-wick", "name": "John Wick Sprite", "rarity": "mythic", "season": "c7s3",
       "ability": "Revela enemigos cercanos a ti y a tu escuadron tras una eliminacion.",
       "variants": ["base"]
+    },
+    {
+      "id": "xray", "name": "X-Ray Sprite", "rarity": "mythic", "season": "c7s4",
+      "ability": "Habilidad aun no revelada.",
+      "variants": ["base"],
+      "unreleased": ["base"]
+    },
+    {
+      "id": "pond", "name": "Pond Sprite", "rarity": "mythic", "season": "c7s4",
+      "ability": "Habilidad aun no revelada.",
+      "variants": ["base"],
+      "unreleased": ["base"]
+    },
+    {
+      "id": "honey", "name": "Honey Sprite", "rarity": "mythic", "season": "c7s4",
+      "ability": "Habilidad aun no revelada.",
+      "variants": ["base"],
+      "unreleased": ["base"]
+    },
+    {
+      "id": "dumpster", "name": "Dumpster Dive Sprite", "rarity": "mythic", "season": "c7s4",
+      "ability": "Habilidad aun no revelada.",
+      "variants": ["base"],
+      "unreleased": ["base"]
+    },
+    {
+      "id": "bullet", "name": "Bullet Sprite", "rarity": "mythic", "season": "c7s4",
+      "ability": "Habilidad aun no revelada.",
+      "variants": ["base"],
+      "unreleased": ["base"]
     }
+  ],
+
+  "codeOrder": [
+    "water:base", "water:gold", "water:gummy", "water:galaxy", "water:holofoil", "water:gem",
+    "water:quack", "earth:base", "earth:gold", "earth:gummy", "earth:galaxy", "earth:gem",
+    "earth:cube", "earth:quack", "fire:base", "fire:gold", "fire:gummy", "fire:galaxy",
+    "fire:holofoil", "fire:cube", "fire:quack", "fishy:base", "fishy:gold", "fishy:gummy",
+    "fishy:galaxy", "fishy:cube", "air:base", "air:gold", "air:gummy", "air:galaxy",
+    "air:holofoil", "duck:base", "duck:gold", "duck:gummy", "duck:galaxy", "duck:gem",
+    "ghost:base", "ghost:gold", "ghost:gummy", "ghost:galaxy", "ghost:holofoil", "demon:base",
+    "demon:gold", "demon:gummy", "demon:galaxy", "demon:gem", "king:base", "king:gold",
+    "king:gummy", "king:galaxy", "king:holofoil", "aura:base", "aura:gold", "aura:gummy",
+    "aura:galaxy", "aura:gem", "striker:base", "striker:gold", "striker:gummy", "striker:galaxy",
+    "striker:holofoil", "dream:base", "dream:gold", "dream:gummy", "dream:galaxy", "dream:cube",
+    "punk:base", "punk:gold", "punk:gummy", "punk:galaxy", "punk:gem", "punk:cube",
+    "boss:base", "boss:gold", "boss:gummy", "boss:galaxy", "boss:cube", "seven:base",
+    "seven:gold", "seven:gummy", "seven:galaxy", "seven:holofoil", "lootin-llama:base", "lootin-llama:gold",
+    "lootin-llama:gummy", "lootin-llama:galaxy", "lootin-llama:gem", "peeky-peely:base", "peeky-peely:gold", "peeky-peely:gummy",
+    "peeky-peely:galaxy", "peeky-peely:holofoil", "grim:base", "grim:gold", "grim:gummy", "grim:galaxy",
+    "grim:holofoil", "grim:gem", "grim:cube", "zero-point:base", "zero-point:gold", "zero-point:gummy",
+    "zero-point:galaxy", "zero-point:holofoil", "zero-point:gem", "zero-point:cube", "zero-point:quack", "burnt-peanut:base",
+    "batman:base", "batman:gold", "batman:gummy", "batman:galaxy", "batman:holofoil", "batman:cube",
+    "pollo:base", "vini-jr:base", "ironmouse:base", "john-wick:base", "fire:gem", "ghost:gem",
+    "dream:gem", "fishy:gem", "fishy:holofoil", "striker:gem", "aura:holofoil", "boss:gem",
+    "boss:holofoil", "air:gem", "seven:gem", "batman:gem", "lootin-llama:holofoil", "lootin-llama:cube",
+    "peeky-peely:gem", "peeky-peely:cube", "xray:base", "pond:base", "honey:base", "dumpster:base",
+    "bullet:base"
   ]
 }

@@ -149,15 +149,65 @@ export function exportJSON() {
   URL.revokeObjectURL(url);
 }
 
-export async function importJSON(file) {
-  const text = await file.text();
-  const parsed = JSON.parse(text);
-  if (!parsed || typeof parsed.entries !== 'object') {
+/** Un respaldo legitimo pesa unos pocos KB; 1 MB es un techo mas que generoso. */
+const MAX_IMPORT_BYTES = 1024 * 1024;
+
+/**
+ * Importa un respaldo. Sanea todo lo que entra: un archivo manipulado no debe
+ * poder dejar el estado inconsistente ni meter claves que no existan.
+ * @param {File} file
+ * @param {Set<string>} validKeys claves del catalogo actual; lo que no este aqui se descarta
+ */
+export async function importJSON(file, validKeys = null) {
+  if (file.size > MAX_IMPORT_BYTES) {
+    throw new Error(`El archivo pesa ${(file.size / 1024 / 1024).toFixed(1)} MB. Un respaldo real no llega a 1 MB.`);
+  }
+
+  let parsed;
+  try {
+    parsed = JSON.parse(await file.text());
+  } catch {
+    throw new Error('El archivo no es JSON valido.');
+  }
+  if (!parsed || typeof parsed !== 'object' || typeof parsed.entries !== 'object' || parsed.entries === null) {
     throw new Error('Ese archivo no parece un respaldo de Sprite Tracker.');
   }
-  state = migrate(parsed);
+
+  const clean = emptyState();
+  let descartadas = 0;
+
+  for (const [key, value] of Object.entries(parsed.entries)) {
+    if (validKeys && !validKeys.has(key)) { descartadas++; continue; }
+    if (!value || typeof value !== 'object') { descartadas++; continue; }
+
+    const status = Number(value.status);
+    if (!Number.isInteger(status) || status < OWNED || status > MASTERED) { descartadas++; continue; }
+
+    clean.entries[key] = {
+      status,
+      date: typeof value.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value.date) ? value.date : '',
+      note: typeof value.note === 'string' ? value.note.slice(0, 500) : '',
+    };
+  }
+
+  if (Array.isArray(parsed.hunt)) {
+    clean.hunt = parsed.hunt
+      .filter(k => typeof k === 'string' && (!validKeys || validKeys.has(k)))
+      .slice(0, 200);
+  }
+  if (Array.isArray(parsed.friends)) {
+    clean.friends = parsed.friends
+      .filter(f => f && typeof f.name === 'string' && typeof f.code === 'string')
+      .map(f => ({ name: f.name.slice(0, 40), code: f.code.slice(0, 400), savedAt: f.savedAt ?? '' }))
+      .slice(0, 50);
+  }
+  if (parsed.prefs && typeof parsed.prefs === 'object') {
+    clean.prefs = { ...clean.prefs, ...parsed.prefs };
+  }
+
+  state = clean;
   persist();
-  return Object.keys(state.entries).length;
+  return { importadas: Object.keys(clean.entries).length, descartadas };
 }
 
 export function resetAll() {

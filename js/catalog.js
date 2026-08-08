@@ -1,10 +1,19 @@
 // Carga, valida y aplana el catalogo de sprites.
 //
-// El "indice aplanado" (flat) es la lista ordenada de TODAS las entradas
-// coleccionables (sprite x variante). Su ORDEN es sagrado: es lo que hace que
-// los codigos para compartir sigan funcionando entre versiones del catalogo.
+// Hay DOS ordenes distintos y no hay que confundirlos:
+//
+//   catalog.flat       Orden de PRESENTACION. Sale de recorrer sprites[] y, dentro
+//                      de cada uno, su array variants[]. Se puede reordenar libremente.
+//                      Lo usan los filtros, las estadisticas y el render.
+//
+//   catalog.codeIndex  Orden de CODIFICACION. Sale tal cual de codeOrder[] del JSON.
+//                      Es APPEND-ONLY: la posicion de cada entrada es su identidad
+//                      dentro del codigo para compartir. Solo lo usa share.js.
+//
+// Separarlos es lo que permite que Epic agregue una variante en medio (como la tanda
+// de Gem, que se mete en Fire y Ghost) sin invalidar los codigos ya compartidos.
 
-/** @typedef {{key:string, spriteId:string, variantId:string, sprite:object, variant:object, released:boolean}} Entry */
+/** @typedef {{key:string, spriteId:string, variantId:string, sprite:object, variant:object, released:boolean, img:string}} Entry */
 
 let catalog = null;
 
@@ -45,11 +54,8 @@ export async function loadCatalog() {
       if (!seenVariants.has(v)) problems.push(`"${s.id}" marca como no lanzada "${v}", que no esta en sus variantes`);
     }
   }
-  if (problems.length) {
-    throw new Error('data/sprites.json tiene errores:\n  - ' + problems.join('\n  - '));
-  }
 
-  // --- Aplanado estable ---
+  // --- Aplanado en orden de presentacion ---
   /** @type {Entry[]} */
   const flat = [];
   const byKey = new Map();
@@ -57,17 +63,48 @@ export async function loadCatalog() {
   for (const sprite of raw.sprites) {
     const unreleased = new Set(sprite.unreleased ?? []);
     for (const variantId of sprite.variants) {
+      const key = `${sprite.id}:${variantId}`;
       const entry = {
-        key: `${sprite.id}:${variantId}`,
+        key,
         spriteId: sprite.id,
         variantId,
         sprite,
         variant: variants.get(variantId),
         released: !unreleased.has(variantId),
+        img: `img/sprites/${sprite.id}-${variantId}.png`,
       };
-      byKey.set(entry.key, entry);
+      byKey.set(key, entry);
       flat.push(entry);
     }
+  }
+
+  // --- Validacion critica de codeOrder ---
+  // Si esto se rompe, los codigos ya compartidos decodifican sprites equivocados.
+  const codeOrder = raw.codeOrder ?? [];
+  const seenInCode = new Set();
+  const codeIndex = [];
+
+  for (const key of codeOrder) {
+    if (seenInCode.has(key)) {
+      problems.push(`codeOrder repite la clave "${key}"`);
+      continue;
+    }
+    seenInCode.add(key);
+    const entry = byKey.get(key);
+    if (!entry) {
+      problems.push(`codeOrder menciona "${key}", que no existe en sprites[]`);
+      continue;
+    }
+    codeIndex.push(entry);
+  }
+  for (const entry of flat) {
+    if (!seenInCode.has(entry.key)) {
+      problems.push(`"${entry.key}" existe en sprites[] pero falta en codeOrder (agregala AL FINAL)`);
+    }
+  }
+
+  if (problems.length) {
+    throw new Error('data/sprites.json tiene errores:\n  - ' + problems.join('\n  - '));
   }
 
   catalog = {
@@ -77,9 +114,10 @@ export async function loadCatalog() {
     rarityList: [...raw.rarities].sort((a, b) => a.order - b.order),
     seasonList: raw.seasons,
     variants, rarities, seasons,
-    flat,
+    flat,       // presentacion
+    codeIndex,  // codificacion (append-only)
     byKey,
-    /** Entradas ya disponibles en el juego. Es el denominador "oficial" (117). */
+    /** Entradas ya disponibles en el juego. Es el denominador que se muestra. */
     totalReleased: flat.filter(e => e.released).length,
     totalAll: flat.length,
   };

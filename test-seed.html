@@ -1,0 +1,23 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>seed</title></head><body>
+<pre id="o">sembrando…</pre>
+<script type="module">
+import { loadCatalog } from './js/catalog.js';
+const cat = await loadCatalog();
+const entries = {};
+let seed = 7;
+const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+for (const e of cat.flat) {
+  if (!e.released) continue;
+  const r = rnd();
+  if (r < 0.34) entries[e.key] = { status: 1, date: '2026-07-' + String(2 + Math.floor(rnd() * 27)).padStart(2, '0'), note: '' };
+  else if (r < 0.46) entries[e.key] = { status: 2, date: '2026-08-0' + (1 + Math.floor(rnd() * 7)), note: '' };
+}
+// forzar un par de mastery de sprite (variante base) para que el contador no salga en 0
+for (const id of ['water', 'grim', 'duck']) entries[`${id}:base`] = { status: 2, date: '2026-08-05', note: '' };
+localStorage.setItem('fnsprites.v1', JSON.stringify({
+  schemaVersion: 1, entries,
+  hunt: ['zero-point:quack', 'batman:cube', 'grim:gem'],
+  friends: [], prefs: { groupBy: 'sprite', sortBy: 'rarity' },
+}));
+document.getElementById('o').textContent = 'sembradas ' + Object.keys(entries).length + ' entradas';
+</script></body></html>

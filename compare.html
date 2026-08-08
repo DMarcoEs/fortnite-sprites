@@ -2,7 +2,9 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
 <title>Comparar colecciones — Sprite Tracker</title>
 <meta name="description" content="Compara tu colección de Sprites de Fortnite con la de un amigo. Sin cuentas: solo un código.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
@@ -35,8 +37,7 @@
       <button class="btn btn-primary btn-sm" id="do-compare">Comparar</button>
     </div>
     <div class="row" style="margin-top:12px">
-      <input id="friend-name" placeholder="Nombre del amigo (opcional)"
-             style="padding:8px 11px;background:var(--bg-2);border:1px solid var(--line);border-radius:8px;color:var(--text);font-family:inherit;font-size:.85rem">
+      <input id="friend-name" class="text-input" placeholder="Nombre del amigo (opcional)" autocomplete="off" maxlength="40">
       <button class="btn btn-sm" id="save-friend">Guardar amigo</button>
       <select id="saved-friends" hidden></select>
     </div>
@@ -68,7 +69,8 @@
 </main>
 
 <footer>
-  Proyecto personal sin relación con Epic Games. Los datos se guardan solo en este navegador.
+  Proyecto personal de fan, sin relación con Epic Games.<br>
+  Los Sprites y sus imágenes son propiedad de Epic Games. La comparación se calcula en tu navegador.
 </footer>
 
 <script type="module" src="js/compare.js"></script>

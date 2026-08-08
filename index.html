@@ -2,9 +2,11 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
 <title>Sprite Tracker — Colección de Sprites de Fortnite</title>
-<meta name="description" content="Checklist manual de los Sprites de Fortnite: variantes, mastery, estadísticas y comparación con amigos. Sin cuenta, sin servidor.">
+<meta name="description" content="Checklist de los Sprites de Fortnite: variantes, mastery, estadísticas y comparación con amigos. Sin cuenta, sin servidor.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
 <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -21,7 +23,7 @@
       <a href="#" data-tab="hunt">Buscando</a>
       <a href="#" data-tab="historial">Historial</a>
       <a href="#" data-tab="datos">Datos</a>
-      <a href="compare.html">Comparar con amigos</a>
+      <a href="compare.html">Comparar</a>
     </nav>
   </div>
 </header>
@@ -38,6 +40,7 @@
       <div class="search"><input id="search" type="search" placeholder="Buscar sprite o variante…" autocomplete="off"></div>
       <select id="f-rarity"><option value="all">Todas las rarezas</option></select>
       <select id="f-variant"><option value="all">Todas las variantes</option></select>
+      <select id="f-season"><option value="all">Todas las temporadas</option></select>
       <select id="f-status">
         <option value="all">Todos</option>
         <option value="missing">Me faltan</option>
@@ -57,9 +60,9 @@
     </div>
 
     <div class="legend">
-      <span><i style="background:transparent"></i> Falta</span>
-      <span><i style="background:#4da3ff;color:#4da3ff"></i> Lo tengo</span>
-      <span><i style="background:#f2b134;color:#f2b134"></i> Masterizado</span>
+      <span><i class="dim"></i> Me falta</span>
+      <span><i></i> La tengo</span>
+      <span><i class="master"></i> Masterizada</span>
       <span>🎯 En búsqueda</span>
       <span style="margin-left:auto">Clic = cambiar estado · Clic derecho = marcar objetivo</span>
     </div>
@@ -89,7 +92,7 @@
   <section data-panel="datos" hidden>
     <div class="card">
       <h2>🔗 Tu código para compartir</h2>
-      <p class="hint">Toda tu colección cabe en este código. Mándaselo a un amigo y podrá comparar su lista con la tuya al instante. No hace falta que ninguno de los dos cree una cuenta.</p>
+      <p class="hint">Toda tu colección cabe en este código. Mándaselo a un amigo y podrá comparar su lista con la tuya al instante, sin que ninguno de los dos cree una cuenta. Viaja después del <code>#</code> de la URL, así que ni GitHub ve qué sprites tienes.</p>
       <div class="code-box">
         <input id="my-code" readonly>
         <button class="btn btn-primary btn-sm" id="copy-code">Copiar código</button>
@@ -109,16 +112,17 @@
     </div>
 
     <div class="card">
-      <h2>🧩 Actualizar el catálogo</h2>
+      <h2>🧩 Catálogo</h2>
       <p class="hint" id="catalog-info"></p>
-      <p class="hint" style="margin:0">Cuando salga una temporada nueva solo hay que agregar los sprites al final de <code>data/sprites.json</code>. No se toca nada de código y los códigos compartidos siguen funcionando.</p>
+      <p class="hint" style="margin:0">Cuando salga una temporada nueva solo hay que agregar los sprites al final de <code>data/sprites.json</code> y sus claves al final de <code>codeOrder</code>. No se toca nada de código y los links ya compartidos siguen funcionando.</p>
     </div>
   </section>
 
 </main>
 
 <footer>
-  Proyecto personal sin relación con Epic Games. Los datos se guardan solo en este navegador.
+  Proyecto personal de fan, sin relación con Epic Games.<br>
+  Los Sprites y sus imágenes son propiedad de Epic Games. Tus marcas se guardan solo en este navegador.
 </footer>
 
 <script type="module" src="js/app.js"></script>

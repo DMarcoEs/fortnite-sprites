@@ -1,8 +1,11 @@
-// Codigos para compartir: toda la coleccion en ~40 caracteres, sin servidor.
+// Codigos para compartir: toda la coleccion en ~50 caracteres, sin servidor.
 //
-// Cada entrada del catalogo ocupa 2 bits (0 = no la tengo, 1 = obtenida,
-// 2 = masterizada). Como el indice aplanado es append-only, un codigo viejo
-// (mas corto) sigue decodificando bien: los bytes que faltan valen 0.
+// Cada entrada ocupa 2 bits (0 = no la tengo, 1 = obtenida, 2 = masterizada),
+// en el orden de catalog.codeIndex — NUNCA en el de catalog.flat.
+//
+// codeIndex sale de codeOrder[] del JSON, que es append-only. Por eso un codigo
+// viejo (mas corto) sigue decodificando bien: los bytes que faltan valen 0, y las
+// entradas que se agregaron despues simplemente salen como "no la tengo".
 
 import { NONE, MASTERED } from './store.js';
 
@@ -26,10 +29,10 @@ function base64UrlToBytes(str) {
  * @returns {string} codigo con formato "<version>.<payload>"
  */
 export function encodeCollection(catalog, getStatusFn) {
-  const n = catalog.flat.length;
+  const n = catalog.codeIndex.length;
   const bytes = new Uint8Array(Math.ceil((n * 2) / 8));
 
-  catalog.flat.forEach((entry, i) => {
+  catalog.codeIndex.forEach((entry, i) => {
     const status = Math.min(Math.max(getStatusFn(entry.key) | 0, NONE), MASTERED);
     const bit = i * 2;
     // bit siempre es par, asi que los 2 bits nunca cruzan un byte.
@@ -64,13 +67,13 @@ export function decodeCollection(catalog, input) {
     throw new Error('El codigo esta incompleto o se copio mal. Pidele a tu amigo que lo mande de nuevo.');
   }
 
-  const maxBytes = Math.ceil((catalog.flat.length * 2) / 8);
+  const maxBytes = Math.ceil((catalog.codeIndex.length * 2) / 8);
   if (bytes.length > maxBytes) {
     throw new Error('Ese codigo es de un catalogo mas nuevo que el de esta pagina. Actualiza el sitio.');
   }
 
   const statuses = new Map();
-  catalog.flat.forEach((entry, i) => {
+  catalog.codeIndex.forEach((entry, i) => {
     const bit = i * 2;
     const byte = bytes[bit >> 3] ?? 0;
     const value = (byte >> (bit & 7)) & 0b11;

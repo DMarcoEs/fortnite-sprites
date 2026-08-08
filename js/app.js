@@ -39,15 +39,17 @@ async function main() {
   for (const v of catalog.variantList) {
     $('#f-variant').append(new Option(v.name, v.id));
   }
+  for (const s of catalog.seasonList) {
+    $('#f-season').append(new Option(`${s.name} (C${s.chapter}S${s.season})`, s.id));
+  }
   $('#f-group').value = filters.groupBy;
   $('#f-sort').value = filters.sortBy;
 
+  const pendientes = catalog.totalAll - catalog.totalReleased;
   $('#catalog-info').textContent =
     `Catalogo v${catalog.catalogVersion}: ${catalog.sprites.length} sprites y ` +
     `${catalog.totalReleased} variantes lanzadas` +
-    (catalog.totalAll > catalog.totalReleased
-      ? ` (+${catalog.totalAll - catalog.totalReleased} anunciada sin lanzar).`
-      : '.');
+    (pendientes ? ` (+${pendientes} anunciadas que aun no salen).` : '.');
 
   // --- Pintado ---
   const handlers = {
@@ -80,6 +82,7 @@ async function main() {
   bind('#search', 'search');
   bind('#f-rarity', 'rarity');
   bind('#f-variant', 'variant');
+  bind('#f-season', 'season');
   bind('#f-status', 'status');
   bind('#f-group', 'groupBy', 'groupBy');
   bind('#f-sort', 'sortBy', 'sortBy');
@@ -108,8 +111,12 @@ async function main() {
       return;
     }
     try {
-      const count = await store.importJSON(file);
-      toast(`Respaldo importado: ${count} variantes`);
+      // Solo se aceptan claves que existan en el catalogo actual.
+      const validKeys = new Set(catalog.byKey.keys());
+      const { importadas, descartadas } = await store.importJSON(file, validKeys);
+      toast(descartadas
+        ? `Importadas ${importadas} variantes (${descartadas} entradas invalidas se descartaron)`
+        : `Respaldo importado: ${importadas} variantes`);
     } catch (err) {
       toast(`No se pudo importar: ${err.message}`, true);
     }
