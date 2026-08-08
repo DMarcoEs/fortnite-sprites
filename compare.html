@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Comparar colecciones — Sprite Tracker</title>
+<meta name="description" content="Compara tu colección de Sprites de Fortnite con la de un amigo. Sin cuentas: solo un código.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="logo">✨</span>
+      <span>Sprite Tracker<small>Fortnite · colección manual</small></span>
+    </div>
+    <nav class="nav">
+      <a href="index.html">Colección</a>
+      <a href="compare.html" class="active">Comparar con amigos</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div id="error" hidden class="error-banner"></div>
+
+  <div class="card">
+    <h2>👥 Comparar con un amigo</h2>
+    <p class="hint">Pega aquí el código (o el link completo) que te pasó tu amigo. Todo se calcula en tu navegador: no se sube nada a ningún servidor.</p>
+    <div class="code-box">
+      <input id="their-code" placeholder="1.AbC123… o el link completo" autocomplete="off" spellcheck="false">
+      <button class="btn btn-primary btn-sm" id="do-compare">Comparar</button>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <input id="friend-name" placeholder="Nombre del amigo (opcional)"
+             style="padding:8px 11px;background:var(--bg-2);border:1px solid var(--line);border-radius:8px;color:var(--text);font-family:inherit;font-size:.85rem">
+      <button class="btn btn-sm" id="save-friend">Guardar amigo</button>
+      <select id="saved-friends" hidden></select>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🔗 Tu código</h2>
+    <p class="hint">Mándaselo de vuelta para que él también pueda comparar.</p>
+    <div class="code-box">
+      <input id="my-code" readonly>
+      <button class="btn btn-primary btn-sm" id="copy-code">Copiar código</button>
+      <button class="btn btn-sm" id="copy-link">Copiar link</button>
+    </div>
+  </div>
+
+  <div id="result" hidden>
+    <div class="stats" id="summary"></div>
+    <div class="row" style="margin-bottom:14px">
+      <button class="btn btn-sm" id="copy-text">📋 Copiar comparación como texto (para Discord)</button>
+    </div>
+    <div class="compare-grid" id="buckets"></div>
+  </div>
+
+  <div id="placeholder" class="empty-state">
+    <span class="big">🤝</span>
+    <div>Pega el código de tu amigo arriba para ver quién tiene qué.</div>
+  </div>
+
+</main>
+
+<footer>
+  Proyecto personal sin relación con Epic Games. Los datos se guardan solo en este navegador.
+</footer>
+
+<script type="module" src="js/compare.js"></script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+{
+  "catalogVersion": 1,
+  "_leeme": "ARCHIVO APPEND-ONLY. Nunca renombres, reordenes ni borres un 'id' existente: los codigos para compartir dependen del orden. Para actualizar solo AGREGA al final de 'variants' y de 'sprites'. Ver README.md.",
+
+  "variants": [
+    { "id": "base",     "name": "Base",     "bonus": "La habilidad propia del Sprite",            "color": "#9aa4b2" },
+    { "id": "gold",     "name": "Gold",     "bonus": "3x XP de Sprite por eliminacion",           "color": "#f2b134" },
+    { "id": "gummy",    "name": "Gummy",    "bonus": "Polvo de Sprite extra al extraer",          "color": "#ff6bb5" },
+    { "id": "galaxy",   "name": "Galaxy",   "bonus": "+30% de municion en contenedores",          "color": "#8b6bff" },
+    { "id": "holofoil", "name": "Holofoil", "bonus": "Mejora la suerte de variantes raras del escuadron", "color": "#3ddbd9" },
+    { "id": "gem",      "name": "Gem",      "bonus": "Solo cosmetico: conserva la habilidad Base", "color": "#5ec8f2" },
+    { "id": "cube",     "name": "Cube",     "bonus": "Solo cosmetico: conserva la habilidad Base", "color": "#c04cff" },
+    { "id": "quack",    "name": "Quack",    "bonus": "Solo cosmetico: conserva la habilidad Base", "color": "#ffd24a" }
+  ],
+
+  "rarities": [
+    { "id": "rare",      "name": "Rare",      "color": "#3d8bfd", "order": 1 },
+    { "id": "epic",      "name": "Epic",      "color": "#a855f7", "order": 2 },
+    { "id": "legendary", "name": "Legendary", "color": "#f97316", "order": 3 },
+    { "id": "mythic",    "name": "Mythic",    "color": "#facc15", "order": 4 }
+  ],
+
+  "seasons": [
+    { "id": "c7s3", "name": "Runners",  "chapter": 7, "season": 3 },
+    { "id": "c7s4", "name": "Override", "chapter": 7, "season": 4 }
+  ],
+
+  "sprites": [
+    {
+      "id": "water", "name": "Water Sprite", "rarity": "rare", "season": "c7s3",
+      "ability": "Recupera escudo mientras estas dentro del agua.",
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem", "quack"]
+    },
+    {
+      "id": "earth", "name": "Earth Sprite", "rarity": "rare", "season": "c7s3",
+      "ability": "Da probabilidad de objetos raros extra al abrir cofres.",
+      "variants": ["base", "gold", "gummy", "galaxy", "gem", "cube", "quack"]
+    },
+    {
+      "id": "fire", "name": "Fire Sprite", "rarity": "rare", "season": "c7s3",
+      "ability": "Libera una explosion de fuego tras infligir suficiente dano.",
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "cube", "quack"]
+    },
+    {
+      "id": "fishy", "name": "Fishy Sprite", "rarity": "rare", "season": "c7s3",
+      "ability": "Aumenta la velocidad de nado y da impulso de movimiento al recibir disparos.",
+      "variants": ["base", "gold", "gummy", "galaxy", "cube"]
+    },
+    {
+      "id": "air", "name": "Air Sprite", "rarity": "rare", "season": "c7s3",
+      "ability": "Aumenta la velocidad de sprint y la altura de salto.",
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil"]
+    },
+
+    {
+      "id": "duck", "name": "Duck Sprite", "rarity": "epic", "season": "c7s3",
+      "ability": "Emotear y tocar musica recupera escudo.",
+      "variants": ["base", "gold", "gummy", "galaxy", "gem"]
+    },
+    {
+      "id": "ghost", "name": "Ghost Sprite", "rarity": "epic", "season": "c7s3",
+      "ability": "Te vuelve invisible un momento despues de recargar.",
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil"]
+    },
+    {
+      "id": "demon", "name": "Demon Sprite", "rarity": "epic", "season": "c7s3",
+      "ability": "Roba vida y escudo en cada eliminacion.",
+      "variants": ["base", "gold", "gummy", "galaxy", "gem"]
+    },
+    {
+      "id": "king", "name": "King Sprite", "rarity": "epic", "season": "c7s3",
+      "ability": "Aumenta el dano del pico.",
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil"]
+    },
+    {
+      "id": "aura", "name": "Aura Sprite", "rarity": "epic", "season": "c7s3",
+      "ability": "Otorga una carga de Roca Electrica tras infligir suficiente dano.",
+      "variants": ["base", "gold", "gummy", "galaxy", "gem"]
+    },
+    {
+      "id": "striker", "name": "Striker Sprite", "rarity": "epic", "season": "c7s3",
+      "ability": "Activa Sobrecarga despues de escalar o saltar obstaculos.",
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil"]
+    },
+
+    {
+      "id": "dream", "name": "Dream Sprite", "rarity": "legendary", "season": "c7s3",
+      "ability": "Da un objeto aleatorio en cada nivel, con mejor botin al nivel maximo.",
+      "variants": ["base", "gold", "gummy", "galaxy", "cube"]
+    },
+    {
+      "id": "punk", "name": "Punk Sprite", "rarity": "legendary", "season": "c7s3",
+      "ability": "Efecto misterioso: intencionalmente impredecible. Puede dar municion infinita.",
+      "variants": ["base", "gold", "gummy", "galaxy", "gem", "cube"],
+      "unreleased": ["gem"]
+    },
+    {
+      "id": "boss", "name": "Boss Sprite", "rarity": "legendary", "season": "c7s3",
+      "ability": "Aumenta tu Vida y Escudo maximos.",
+      "variants": ["base", "gold", "gummy", "galaxy", "cube"]
+    },
+    {
+      "id": "seven", "name": "Seven Sprite", "rarity": "legendary", "season": "c7s3",
+      "ability": "Revela las huellas de los enemigos a todo tu escuadron.",
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil"]
+    },
+    {
+      "id": "lootin-llama", "name": "Lootin' Llama Sprite", "rarity": "legendary", "season": "c7s3",
+      "ability": "Abrir cajas de municion tiene probabilidad de mejorar tu arma.",
+      "variants": ["base", "gold", "gummy", "galaxy", "gem"]
+    },
+    {
+      "id": "peeky-peely", "name": "Peeky Peely Sprite", "rarity": "legendary", "season": "c7s3",
+      "ability": "Marca variantes raras y enemigos cercanos, pero tambien revela tu posicion.",
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil"]
+    },
+
+    {
+      "id": "grim", "name": "Grim Reaper Sprite", "rarity": "mythic", "season": "c7s3",
+      "ability": "Marca a los jugadores que te hacen dano.",
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem", "cube"]
+    },
+    {
+      "id": "zero-point", "name": "Zero Point Sprite", "rarity": "mythic", "season": "c7s3",
+      "ability": "Genera una Burbuja Escudo Jr. cuando te curas.",
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem", "cube", "quack"]
+    },
+    {
+      "id": "burnt-peanut", "name": "Burnt Peanut Sprite", "rarity": "mythic", "season": "c7s3",
+      "ability": "Puede soltar botin extra o mitico en las eliminaciones.",
+      "variants": ["base"]
+    },
+    {
+      "id": "batman", "name": "Batman Sprite", "rarity": "mythic", "season": "c7s3",
+      "ability": "Habilidad sin confirmar dentro del juego.",
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "cube"]
+    },
+    {
+      "id": "pollo", "name": "Pollo Sprite", "rarity": "mythic", "season": "c7s3",
+      "ability": "Las eliminaciones restauran escudo lentamente a ti y a tus companeros cercanos.",
+      "variants": ["base"]
+    },
+    {
+      "id": "vini-jr", "name": "Vini Jr. Sprite", "rarity": "mythic", "season": "c7s3",
+      "ability": "Correr carga un deslizamiento destructivo.",
+      "variants": ["base"]
+    },
+    {
+      "id": "ironmouse", "name": "Ironmouse Sprite", "rarity": "mythic", "season": "c7s3",
+      "ability": "Habilidad sin confirmar dentro del juego.",
+      "variants": ["base"]
+    },
+    {
+      "id": "john-wick", "name": "John Wick Sprite", "rarity": "mythic", "season": "c7s3",
+      "ability": "Revela enemigos cercanos a ti y a tu escuadron tras una eliminacion.",
+      "variants": ["base"]
+    }
+  ]
+}

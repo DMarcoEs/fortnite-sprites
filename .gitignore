@@ -1,0 +1,8 @@
+.vscode/
+.claude/
+__test.html
+__seed.html
+.DS_Store
+Thumbs.db
+*.log
+fnsprites-*.json
