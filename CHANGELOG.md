@@ -5,6 +5,41 @@ Para ver la evolución **por función** en vez de por fecha, ve a [docs/](docs/)
 
 ---
 
+## 2026-08-08 — Sesión 3: privacidad del correo y deploy
+
+### 🔒 El correo personal en el historial de commits
+
+Al preparar la publicación se detectó que los 2 commits llevaban la dirección de correo
+personal como autor. **Al hacer público el repositorio habría quedado visible para
+cualquiera, de forma permanente.** No estaba contemplado en el modelo de amenazas.
+
+Se corrigió antes del primer push, que es la única ventana en la que se puede hacer sin
+consecuencias:
+
+- Se pasó a la dirección **noreply de GitHub** (`ID+usuario@users.noreply.github.com`).
+- Se reescribieron los commits existentes con `git filter-branch`, preservando mensajes,
+  fechas y contenido.
+- Se activó en GitHub **Block command line pushes that expose my email**: una garantía del
+  lado del servidor que rechaza cualquier push que exponga la dirección, sin depender de
+  recordar configurar git en cada máquina.
+
+Documentado en [docs/seguridad.md](docs/seguridad.md) y [docs/deploy.md](docs/deploy.md).
+
+### Corrección de `docs/deploy.md`
+
+El procedimiento de autenticación estaba mal redactado. Listaba las respuestas del menú de
+`gh auth login` (*"→ GitHub.com → HTTPS → Y"*) como si hubiera que escribirlas, cuando ese
+menú **se navega con flechas**. El resultado real fue que el texto acabó en PowerShell
+(`El término 'GitHub.com' no se reconoce...`) y la autenticación nunca se completó.
+
+- Se reemplazó por un solo comando con flags que **se salta todos los menús**:
+  `gh auth login --hostname github.com --git-protocol https --web`
+- Se añadió un aviso explícito sobre la navegación con flechas.
+- Se añadió una vía alterna sin `gh` (web + `git push` con Git Credential Manager).
+- Se amplió la tabla de problemas comunes con los errores que aparecieron de verdad.
+
+---
+
 ## 2026-08-08 — Sesión 2: imágenes, diseño, seguridad y documentación
 
 ### 🔴 Cambio estructural: `codeOrder`

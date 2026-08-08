@@ -93,6 +93,33 @@ protege al proyecto a largo plazo.
 
 ## Privacidad
 
+### Tu correo en el historial de commits
+
+Un detalle que se pasa por alto y **no tiene vuelta atrás una vez publicado**: Git guarda el
+correo del autor dentro de cada commit. Al hacer público el repositorio, esa dirección queda
+visible para cualquiera, en `github.com/…/commits` y en cualquier clon que alguien haya hecho.
+
+Tres capas de defensa, de menos a más fuerte:
+
+1. **Usar la dirección noreply de GitHub** (`ID+usuario@users.noreply.github.com`) en vez
+   de la personal. Los correos siguen llegando; la dirección real no se expone.
+2. **Reescribir los commits que ya existan** antes del primer push. Es la única ventana en
+   la que se puede hacer sin consecuencias: sin remote, el historial no le importa a nadie.
+3. **Activar en GitHub → Settings → Emails:**
+   - *Keep my email addresses private*
+   - *Block command line pushes that expose my email* ← **la importante**
+
+La tercera es la que de verdad protege: **GitHub rechaza el push desde el servidor** si
+detecta tu correo personal. Aunque cambies de computadora y se te olvide configurar git, la
+dirección no se filtra. Es una garantía, no una buena intención.
+
+El procedimiento completo está en [deploy.md](deploy.md), paso 3.
+
+> El **nombre** de autor sigue siendo público. Un nombre de pila no identifica ni permite
+> contactar, pero se puede sustituir por el usuario de GitHub si se prefiere.
+
+### El resto
+
 - Todo vive en el `localStorage` de tu navegador. Nada sale a internet.
 - El código del amigo viaja en el **fragmento** de la URL (después del `#`), que los
   navegadores **no envían al servidor**. Ni GitHub ve qué sprites tienes.
@@ -110,6 +137,13 @@ así que **respalda tu colección al empezar y la restaura al terminar**, inclus
 la pestaña a media prueba.
 
 ## Evolución
+
+### 2026-08-08 — Sesión 3
+- **Se añadió la privacidad del correo al modelo de amenazas.** Salió al preparar el deploy:
+  los commits llevaban la dirección personal y habrían quedado públicas para siempre. No
+  estaba contemplado en las dos sesiones anteriores.
+- Se documentaron las tres capas, incluida *Block command line pushes that expose my email*,
+  que es una garantía del lado del servidor y no depende de recordar configurar git.
 
 ### 2026-08-08 — Sesión 2
 - Se añadió CSP por `<meta>` a `index.html` y `compare.html`.
