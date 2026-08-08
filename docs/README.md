@@ -28,11 +28,11 @@ Para la vista cronológica global ve al [CHANGELOG](../CHANGELOG.md).
 ```
 index.html          Vista principal (colección, hunt, historial, datos)
 compare.html        Comparación con amigos
-test.html           Suite de 60 pruebas — ábrela tras cada actualización
+test.html           Suite de 62 pruebas — ábrela tras cada actualización
 test-seed.html      Siembra una colección de ejemplo para revisar el diseño
 
-data/sprites.json   ⭐ el único archivo a editar cada temporada
-img/sprites/        127 imágenes de 96×96, auto-hospedadas
+data/sprites.json    el único archivo a editar cada temporada
+img/sprites/        117 imágenes de 192×192, auto-hospedadas
 
 js/catalog.js       Carga, valida y aplana el catálogo (dos órdenes distintos)
 js/store.js         localStorage, export/import saneado, migraciones

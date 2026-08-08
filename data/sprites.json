@@ -1,6 +1,6 @@
 {
-  "catalogVersion": 2,
-  "_leeme": "NO reordenes ni borres nada de 'codeOrder': define el codigo para compartir y es APPEND-ONLY. El orden de 'sprites' solo afecta la presentacion y si se puede cambiar. Ver docs/catalogo.md.",
+  "catalogVersion": 3,
+  "_leeme": "NO reordenes ni borres nada de codeOrder: define el codigo para compartir y es APPEND-ONLY. Si una entrada deja de existir, quitala de sprites pero DEJA su clave en codeOrder como posicion reservada. El orden de sprites solo afecta la presentacion y si se puede cambiar. Ver docs/catalogo.md.",
 
   "variants": [
     { "id": "base",      "name": "Base",      "color": "#8b95a7", "color2": "#5a6478", "bonus": "La habilidad propia del Sprite" },
@@ -21,8 +21,7 @@
   ],
 
   "seasons": [
-    { "id": "c7s3", "name": "Runners",  "chapter": 7, "season": 3 },
-    { "id": "c7s4", "name": "Override", "chapter": 7, "season": 4 }
+    { "id": "c7s3", "name": "Runners", "chapter": 7, "season": 3 }
   ],
 
   "sprites": [
@@ -39,19 +38,17 @@
     {
       "id": "fire", "name": "Fire Sprite", "rarity": "rare", "season": "c7s3",
       "ability": "Libera una explosion de fuego tras infligir suficiente dano.",
-      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem", "cube", "quack"],
-      "unreleased": ["gem"]
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "cube", "quack"]
     },
     {
       "id": "fishy", "name": "Fishy Sprite", "rarity": "rare", "season": "c7s3",
       "ability": "Aumenta la velocidad de nado y da impulso de movimiento al recibir disparos.",
-      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem", "cube"]
+      "variants": ["base", "gold", "gummy", "galaxy", "cube"]
     },
     {
       "id": "air", "name": "Air Sprite", "rarity": "rare", "season": "c7s3",
       "ability": "Aumenta la velocidad de sprint y la altura de salto.",
-      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem"],
-      "unreleased": ["gem"]
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil"]
     },
     {
       "id": "duck", "name": "Duck Sprite", "rarity": "epic", "season": "c7s3",
@@ -61,8 +58,7 @@
     {
       "id": "ghost", "name": "Ghost Sprite", "rarity": "epic", "season": "c7s3",
       "ability": "Te vuelve invisible un momento despues de recargar.",
-      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem"],
-      "unreleased": ["gem"]
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil"]
     },
     {
       "id": "demon", "name": "Demon Sprite", "rarity": "epic", "season": "c7s3",
@@ -77,46 +73,42 @@
     {
       "id": "aura", "name": "Aura Sprite", "rarity": "epic", "season": "c7s3",
       "ability": "Otorga una carga de Roca Electrica tras infligir suficiente dano.",
-      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem"]
+      "variants": ["base", "gold", "gummy", "galaxy", "gem"]
     },
     {
       "id": "striker", "name": "Striker Sprite", "rarity": "epic", "season": "c7s3",
       "ability": "Activa Sobrecarga despues de escalar o saltar obstaculos.",
-      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem"]
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil"]
     },
     {
       "id": "dream", "name": "Dream Sprite", "rarity": "legendary", "season": "c7s3",
       "ability": "Da un objeto aleatorio en cada nivel, con mejor botin al nivel maximo.",
-      "variants": ["base", "gold", "gummy", "galaxy", "gem", "cube"],
-      "unreleased": ["gem"]
+      "variants": ["base", "gold", "gummy", "galaxy", "cube"]
     },
     {
       "id": "punk", "name": "Punk Sprite", "rarity": "legendary", "season": "c7s3",
       "ability": "Efecto misterioso: intencionalmente impredecible. Puede dar municion infinita.",
-      "variants": ["base", "gold", "gummy", "galaxy", "gem", "cube"],
-      "unreleased": ["gem"]
+      "variants": ["base", "gold", "gummy", "galaxy", "cube"]
     },
     {
       "id": "boss", "name": "Boss Sprite", "rarity": "legendary", "season": "c7s3",
       "ability": "Aumenta tu Vida y Escudo maximos.",
-      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem", "cube"],
-      "unreleased": ["gem"]
+      "variants": ["base", "gold", "gummy", "galaxy", "cube"]
     },
     {
       "id": "seven", "name": "Seven Sprite", "rarity": "legendary", "season": "c7s3",
       "ability": "Revela las huellas de los enemigos a todo tu escuadron.",
-      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem"],
-      "unreleased": ["gem"]
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil"]
     },
     {
       "id": "lootin-llama", "name": "Lootin' Llama Sprite", "rarity": "legendary", "season": "c7s3",
       "ability": "Abrir cajas de municion tiene probabilidad de mejorar tu arma.",
-      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem", "cube"]
+      "variants": ["base", "gold", "gummy", "galaxy", "gem"]
     },
     {
       "id": "peeky-peely", "name": "Peeky Peely Sprite", "rarity": "legendary", "season": "c7s3",
       "ability": "Marca variantes raras y enemigos cercanos, pero tambien revela tu posicion.",
-      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem", "cube"]
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil"]
     },
     {
       "id": "grim", "name": "Grim Reaper Sprite", "rarity": "mythic", "season": "c7s3",
@@ -136,7 +128,7 @@
     {
       "id": "batman", "name": "Batman Sprite", "rarity": "mythic", "season": "c7s3",
       "ability": "Habilidad sin confirmar dentro del juego.",
-      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "gem", "cube"]
+      "variants": ["base", "gold", "gummy", "galaxy", "holofoil", "cube"]
     },
     {
       "id": "pollo", "name": "Pollo Sprite", "rarity": "mythic", "season": "c7s3",
@@ -157,38 +149,10 @@
       "id": "john-wick", "name": "John Wick Sprite", "rarity": "mythic", "season": "c7s3",
       "ability": "Revela enemigos cercanos a ti y a tu escuadron tras una eliminacion.",
       "variants": ["base"]
-    },
-    {
-      "id": "xray", "name": "X-Ray Sprite", "rarity": "mythic", "season": "c7s4",
-      "ability": "Habilidad aun no revelada.",
-      "variants": ["base"],
-      "unreleased": ["base"]
-    },
-    {
-      "id": "pond", "name": "Pond Sprite", "rarity": "mythic", "season": "c7s4",
-      "ability": "Habilidad aun no revelada.",
-      "variants": ["base"],
-      "unreleased": ["base"]
-    },
-    {
-      "id": "honey", "name": "Honey Sprite", "rarity": "mythic", "season": "c7s4",
-      "ability": "Habilidad aun no revelada.",
-      "variants": ["base"],
-      "unreleased": ["base"]
-    },
-    {
-      "id": "dumpster", "name": "Dumpster Dive Sprite", "rarity": "mythic", "season": "c7s4",
-      "ability": "Habilidad aun no revelada.",
-      "variants": ["base"],
-      "unreleased": ["base"]
-    },
-    {
-      "id": "bullet", "name": "Bullet Sprite", "rarity": "mythic", "season": "c7s4",
-      "ability": "Habilidad aun no revelada.",
-      "variants": ["base"],
-      "unreleased": ["base"]
     }
   ],
+
+  "retired": ["punk:gem", "fire:gem", "ghost:gem", "dream:gem", "fishy:gem", "fishy:holofoil", "striker:gem", "aura:holofoil", "boss:gem", "boss:holofoil", "air:gem", "seven:gem", "batman:gem", "lootin-llama:holofoil", "lootin-llama:cube", "peeky-peely:gem", "peeky-peely:cube", "xray:base", "pond:base", "honey:base", "dumpster:base", "bullet:base"],
 
   "codeOrder": [
     "water:base", "water:gold", "water:gummy", "water:galaxy", "water:holofoil", "water:gem",

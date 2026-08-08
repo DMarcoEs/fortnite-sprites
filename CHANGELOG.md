@@ -5,9 +5,64 @@ Para ver la evolución **por función** en vez de por fecha, ve a [docs/](docs/)
 
 ---
 
+## 2026-08-08 — Sesión 4: catálogo corregido, rediseño y sin emojis
+
+### El catálogo tenía 22 entradas que no existen
+
+Marco cotejó el sitio contra **fortnite.gg**, que es la fuente autoritativa, y sobraban 22
+entradas. Al quitarlas el total vuelve a **117 variantes en 25 sprites**, que es justo lo que
+reportan todos los demás trackers.
+
+**La reconciliación de la sesión 2 fue un error de juicio.** Se tomó el `sprites-data.js` de
+staticvacant/fnsprites como "más al día" cuando en realidad incluía variantes especulativas.
+El síntoma estaba a la vista y se pasó por alto: las 12 entradas que quedaron sin imagen eran
+exactamente las que no existían. Se marcaron como "pendientes de verificar" en vez de tomarlas
+como la señal que eran.
+
+Retiradas: 17 variantes (`fire:gem`, `ghost:gem`, `dream:gem`, `punk:gem`, `boss:gem`,
+`boss:holofoil`, `air:gem`, `seven:gem`, `batman:gem`, `fishy:gem`, `fishy:holofoil`,
+`striker:gem`, `aura:holofoil`, `lootin-llama:holofoil`, `lootin-llama:cube`,
+`peeky-peely:gem`, `peeky-peely:cube`) y los 5 sprites de Season 4, que aún no salen.
+
+### Posiciones reservadas: retirar sin romper los links
+
+Borrar esas claves de `codeOrder` habría corrido la posición de las 47 entradas siguientes y
+**corrompido en silencio todos los códigos ya compartidos**. En vez de eso se añadió el array
+`retired[]`: las claves se quedan en `codeOrder` y `catalog.codeIndex` guarda un `null` en
+cada hueco.
+
+Resultado: se pueden retirar entradas para siempre sin invalidar un solo link.
+`catalogVersion` sube a **3**; los códigos siguen midiendo 49 caracteres.
+
+### Rediseño al estilo de fortnite.gg
+
+- Tarjetas con **imagen grande sobre el degradado de su variante**, nombre debajo y botón de
+  estado al pie, como en fortnite.gg — pero manteniendo la distribución agrupada por sprite y
+  con aire entre elementos, en vez de amontonarlo todo.
+- **Imágenes re-renderizadas a 192×192** desde los originales de 512 px. Antes se veían
+  pequeñas y borrosas. Peso: 1.16 MB → 3.84 MB.
+- Grid fluido (`auto-fill` desde 148 px) en vez de `flex-wrap`, para que queden alineadas.
+- **117 de 117 entradas tienen imagen.** Ya no hay ninguna que dependa del fallback.
+
+### Sin emojis
+
+Se eliminaron de la interfaz, de la documentación y del favicon. Lo que antes marcaba un
+emoji ahora lo dice una palabra o una forma dibujada con CSS: el logo, el icono de búsqueda,
+el marcador de objetivo y los tres estados. La suite tiene una prueba que verifica que no
+vuelvan a colarse.
+
+### Otros
+
+- Se quitó el filtro por temporada, que se quedó con una sola opción.
+- Suite de 60 a **62 pruebas**, todas en verde.
+- Se añadió el link del sitio al About del repositorio, para que no haya que entrar a un
+  archivo para encontrarlo.
+
+---
+
 ## 2026-08-08 — Sesión 3: privacidad del correo y deploy
 
-### 🔒 El correo personal en el historial de commits
+### El correo personal en el historial de commits
 
 Al preparar la publicación se detectó que los 2 commits llevaban la dirección de correo
 personal como autor. **Al hacer público el repositorio habría quedado visible para
@@ -42,7 +97,7 @@ menú **se navega con flechas**. El resultado real fue que el texto acabó en Po
 
 ## 2026-08-08 — Sesión 2: imágenes, diseño, seguridad y documentación
 
-### 🔴 Cambio estructural: `codeOrder`
+### Cambio estructural: `codeOrder`
 
 Se detectó un defecto de diseño en el código para compartir. La posición de cada entrada
 en el campo de bits **era su identidad**, y esa posición se derivaba de recorrer
@@ -76,7 +131,7 @@ estaba desactualizado. Se generó un reporte de diferencias antes de aplicar nad
 - **+7 Gem anunciadas sin salir:** Fire, Ghost, Dream, Punk, Boss, Air, Seven.
 - **+5 sprites de Chapter 7 Season 4: Override:** X-Ray, Pond, Honey, Dumpster Dive, Bullet.
 
-> ⚠️ **Pendiente de verificar:** las 10 variantes "ya lanzadas" no tienen imagen en el repo
+> **Pendiente de verificar:** las 10 variantes "ya lanzadas" no tienen imagen en el repo
 > de referencia, lo que sugiere que podrían estar listadas antes de tiempo. Conviene
 > confirmarlas contra fortnite.gg.
 
@@ -95,7 +150,7 @@ estaba desactualizado. Se generó un reporte de diferencias antes de aplicar nad
 - Estructura minimalista, color generoso: cada variante tiene su propio degradado
   (`color` + `color2`), definido **en el JSON, no en el CSS**.
 - Tres estados visuales: **me falta** (degradado al 16% + imagen en gris), **la tengo**
-  (degradado pleno + imagen a color + ✓), **masterizada** (+ anillo dorado ★).
+  (degradado pleno + imagen a color + ok), **masterizada** (+ anillo dorado master).
   Así el color dice *qué variante es* y la intensidad dice *si la tienes*.
 - Se respeta `prefers-reduced-motion`.
 - Nuevo filtro por temporada.

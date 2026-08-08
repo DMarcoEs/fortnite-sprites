@@ -1,11 +1,13 @@
-// Pintado del DOM: estadisticas, fichas de variante, hunt list e historial.
+// Pintado del DOM: estadisticas, tarjetas de variante, hunt list e historial.
 //
 // Todo se construye con createElement/textContent. No se usa innerHTML en
 // ninguna parte, a proposito: asi no existe el patron que alguien pueda copiar
-// mañana con datos que si vengan de fuera. Ver docs/seguridad.md.
+// manana con datos que si vengan de fuera. Ver docs/seguridad.md.
 
 import { NONE, OWNED, MASTERED, getStatus, getEntry, isHunted, loadState } from './store.js';
 import { filterEntries, groupEntries, computeStats, pct } from './filters.js';
+
+const STATUS_LABEL = { [NONE]: 'Me falta', [OWNED]: 'La tengo', [MASTERED]: 'Master' };
 
 export const el = (tag, props = {}, children = []) => {
   const node = Object.assign(document.createElement(tag), props);
@@ -20,7 +22,7 @@ export function toast(message, isError = false) {
   setTimeout(() => t.remove(), isError ? 5500 : 2600);
 }
 
-/** "43 / 117" sin innerHTML: el denominador va en su propio <span>. */
+/** "43 / 117" sin innerHTML: el denominador va en su propio span. */
 function fraction(num, den) {
   return el('div', { className: 'stat-value' }, [
     document.createTextNode(String(num)),
@@ -90,30 +92,35 @@ export function renderStats(catalog, root) {
   );
 }
 
-// ===================== Ficha de variante =====================
+// ===================== Tarjeta de variante =====================
 
 function chip(entry, handlers, showSpriteName = false) {
   const status = getStatus(entry.key);
   const saved = getEntry(entry.key);
 
   const tip = entry.released
-    ? `${entry.sprite.name} — ${entry.variant.name}\n${entry.variant.bonus}` +
+    ? `${entry.sprite.name} - ${entry.variant.name}\n${entry.variant.bonus}` +
       (saved?.date ? `\nObtenida el ${saved.date}` : '') +
-      `\n\nClic: cambiar estado · Clic derecho: marcar objetivo`
+      `\n\nClic: cambiar estado - Clic derecho: marcar objetivo`
     : `${entry.variant.name} de ${entry.sprite.name}\nAnunciada, todavia no esta en el juego`;
 
+  const nombre = el('span', { className: 'chip-name' });
+  if (showSpriteName) {
+    nombre.append(el('span', {
+      className: 'chip-sprite',
+      textContent: entry.sprite.name.replace(' Sprite', ''),
+    }));
+  }
+  nombre.append(document.createTextNode(entry.variant.name));
+
   const node = el('button', {
-    className: `chip${isHunted(entry.key) ? ' hunted' : ''}${entry.released ? '' : ' unreleased'}`,
+    className: `chip${isHunted(entry.key) ? ' hunted' : ''}`,
     type: 'button',
     title: tip,
   }, [
     el('div', { className: 'chip-art' }, [thumb(entry)]),
-    el('span', {
-      className: 'chip-name',
-      textContent: showSpriteName
-        ? `${entry.sprite.name.replace(' Sprite', '')} ${entry.variant.name}`
-        : entry.variant.name,
-    }),
+    nombre,
+    el('span', { className: 'chip-state', textContent: STATUS_LABEL[status] }),
   ]);
 
   node.dataset.status = status;
@@ -122,43 +129,43 @@ function chip(entry, handlers, showSpriteName = false) {
   node.style.setProperty('--v1', entry.variant.color);
   node.style.setProperty('--v2', entry.variant.color2 ?? entry.variant.color);
 
-  if (entry.released) {
-    node.addEventListener('click', () => handlers.onCycle(entry.key));
-    node.addEventListener('contextmenu', ev => { ev.preventDefault(); handlers.onHunt(entry.key); });
-  }
+  node.addEventListener('click', () => handlers.onCycle(entry.key));
+  node.addEventListener('contextmenu', ev => { ev.preventDefault(); handlers.onHunt(entry.key); });
   return node;
 }
 
 // ===================== Grid =====================
 
+function vacio(titulo, sub) {
+  return el('div', { className: 'empty-state' }, [
+    el('div', { className: 'title', textContent: titulo }),
+    sub ? el('div', { className: 'sub', textContent: sub }) : null,
+  ]);
+}
+
 export function renderGroups(catalog, filters, root, handlers) {
   const entries = filterEntries(catalog, filters, { getStatus, isHunted });
 
   if (!entries.length) {
-    root.replaceChildren(el('div', { className: 'empty-state' }, [
-      el('span', { className: 'big', textContent: '🫧' }),
-      el('div', { textContent: 'Ningun sprite coincide con esos filtros.' }),
-    ]));
+    root.replaceChildren(vacio('Ningun sprite coincide con esos filtros.'));
     return;
   }
 
   const groups = groupEntries(catalog, entries, filters);
-  const grouping = filters.groupBy;
+  const porSprite = filters.groupBy === 'sprite';
 
   root.replaceChildren(...groups.map(g => {
-    const released = g.entries.filter(e => e.released);
-    const owned = released.filter(e => getStatus(e.key) >= OWNED).length;
+    const owned = g.entries.filter(e => getStatus(e.key) >= OWNED).length;
     const rarity = g.rarity ? catalog.rarities.get(g.rarity) : null;
 
     return el('section', { className: 'group' }, [
       el('div', { className: 'group-head' }, [
         el('h3', { className: 'group-title', textContent: g.title }),
         rarity ? el('span', { className: 'pill', textContent: rarity.name, style: `color:${rarity.color}` }) : null,
-        el('span', { className: 'group-count', textContent: `${owned}/${released.length}` }),
+        el('span', { className: 'group-count', textContent: `${owned}/${g.entries.length}` }),
       ]),
       g.meta ? el('p', { className: 'group-meta', textContent: g.meta }) : null,
-      el('div', { className: 'variants' },
-        g.entries.map(e => chip(e, handlers, grouping !== 'sprite'))),
+      el('div', { className: 'variants' }, g.entries.map(e => chip(e, handlers, !porSprite))),
     ]);
   }));
 }
@@ -169,12 +176,9 @@ export function renderHunt(catalog, root, handlers) {
   const keys = loadState().hunt;
 
   if (!keys.length) {
-    root.replaceChildren(el('div', { className: 'empty-state' }, [
-      el('span', { className: 'big', textContent: '🎯' }),
-      el('div', { textContent: 'Tu lista de busqueda esta vacia.' }),
-      el('div', { className: 'sub',
-        textContent: 'Haz clic derecho sobre cualquier variante en la Coleccion para marcarla como objetivo.' }),
-    ]));
+    root.replaceChildren(vacio(
+      'Tu lista de busqueda esta vacia.',
+      'Haz clic derecho sobre cualquier variante en la Coleccion para marcarla como objetivo.'));
     return;
   }
 
@@ -191,20 +195,18 @@ export function renderHistory(catalog, root) {
     .sort((a, b) => b.date.localeCompare(a.date));
 
   if (!rows.length) {
-    root.replaceChildren(el('div', { className: 'empty-state' }, [
-      el('span', { className: 'big', textContent: '📖' }),
-      el('div', { textContent: 'Todavia no has registrado ningun sprite.' }),
-      el('div', { className: 'sub', textContent: 'La fecha se guarda sola al marcar una variante como obtenida.' }),
-    ]));
+    root.replaceChildren(vacio(
+      'Todavia no has registrado ningun sprite.',
+      'La fecha se guarda sola al marcar una variante como obtenida.'));
     return;
   }
 
   root.replaceChildren(el('ul', { className: 'timeline' }, rows.map(r => el('li', {}, [
     thumb(r.entry),
     el('span', {}, [
-      el('span', { textContent: `${r.entry.sprite.name.replace(' Sprite', '')} · ` }),
+      el('span', { textContent: `${r.entry.sprite.name.replace(' Sprite', '')} - ` }),
       el('span', { textContent: r.entry.variant.name, style: `color:${r.entry.variant.color};font-weight:600` }),
-      r.status === MASTERED ? el('span', { textContent: '  ★', style: 'color:var(--gold)' }) : null,
+      r.status === MASTERED ? el('span', { className: 'master', textContent: '  master' }) : null,
       r.note ? el('div', { textContent: r.note, style: 'color:var(--text-mute);font-size:.78rem' }) : null,
     ]),
     el('span', { className: 'date', textContent: r.date }),

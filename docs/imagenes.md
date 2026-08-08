@@ -9,7 +9,7 @@ Muestra la imagen real de cada sprite en su ficha, en vez de solo texto y color.
 
 ## Cómo funciona
 
-- Se auto-hospedan **127 PNG de 96×96** en `img/sprites/`, con el nombre
+- Se auto-hospedan **117 PNG de 192×192** en `img/sprites/`, con el nombre
   `{spriteId}-{variantId}.png` — por ejemplo `zero-point-quack.png`.
 - `catalog.js` le pone a cada entrada su ruta: `entry.img`.
 - `render.js` la pinta con `<img loading="lazy" decoding="async">`.
@@ -33,7 +33,7 @@ lootin-llama:holofoil   lootin-llama:cube
 peeky-peely:gem         peeky-peely:cube
 ```
 
-> 💡 10 de estas están marcadas como **ya lanzadas** en el catálogo pero no tienen imagen en
+> 10 de estas están marcadas como **ya lanzadas** en el catálogo pero no tienen imagen en
 > el repo de referencia. Puede ser que estén listadas antes de tiempo. Vale la pena
 > confirmarlas contra fortnite.gg.
 
@@ -73,9 +73,9 @@ el sitio no necesita nada más que el archivo en su sitio.
 
 | | |
 |---|---|
-| Descargadas | 127 de 139 |
+| Imagenes | 117 de 117 |
 | Peso original | 19.7 MB |
-| **Peso final** | **1.16 MB** |
+| **Peso final** | **3.84 MB** |
 | Reducción | 94% |
 | Promedio | 9.4 KB |
 | Más pesada | 18.6 KB (`xray-base.png`) |
@@ -94,7 +94,7 @@ assets del juego.
 
 **Auto-hospedar en vez de enlazar al repo ajeno.** Enlazar a `raw.githubusercontent.com`
 habría pesado 0 en el repo, pero el sitio dependería de que otra persona no renombre ni
-borre nada, y consumiría ancho de banda ajeno. 1.16 MB es un precio barato por no depender
+borre nada, y consumiría ancho de banda ajeno. 3.84 MB es un precio barato por no depender
 de nadie.
 
 **96×96 en vez de los 128 originales.** Se muestran a 78 px (64 en móvil), así que 96 da
@@ -113,6 +113,14 @@ para siempre.
 nuevo. Es el estado normal, no una excepción, y el diseño lo asume.
 
 ## Evolución
+
+### 2026-08-08 — Sesión 4
+- **Re-renderizadas a 192×192** desde los originales de 512 px, que se conservaban. A 96 px
+  se veían pequeñas y borrosas en las tarjetas nuevas.
+- Se borraron las 10 imágenes de entradas retiradas del catálogo.
+- **117 de 117 entradas tienen imagen.** Ya no hay ninguna que dependa del fallback: las 12
+  que faltaban eran precisamente las que no existían en el juego.
+- Peso: 1.16 MB → **3.84 MB** (promedio 33.6 KB). Es el precio de que se vean bien.
 
 ### 2026-08-08 — Sesión 2
 - Se añadieron las imágenes al proyecto: 127 archivos, 1.16 MB.

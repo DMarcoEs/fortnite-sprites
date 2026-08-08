@@ -32,7 +32,7 @@ el empaquetado es tan simple.
 - **Un código corrupto da un mensaje legible**, no una pantalla rota.
 - Las notas y fechas **no** caben aquí — para eso está el export JSON completo.
 
-## 🔴 Por qué existe `codeOrder`
+## Por qué existe `codeOrder`
 
 Esta es la decisión más importante del proyecto.
 
@@ -47,11 +47,11 @@ al principio del archivo:
 
 ```
 ANTES:  … fire:base, fire:gold, fire:gummy, fire:galaxy, fire:holofoil, fire:cube, fire:quack, fishy:base …
-                                                                                    ↑ posición 21
+                                                                                     posición 21
 
 DESPUÉS de insertar fire:gem en su sitio "natural":
         … fire:base, fire:gold, fire:gummy, fire:galaxy, fire:holofoil, fire:gem, fire:cube, fire:quack, fishy:base …
-                                                                          ↑ nueva     ↑ todo lo de aquí en adelante
+                                                                           nueva      todo lo de aquí en adelante
                                                                                         se corrió una posición
 ```
 
@@ -99,6 +99,15 @@ dispositivos. Se descartó por ahora: añade cuentas, un servicio que mantener y
 personales que proteger, para resolver algo que el export JSON ya cubre.
 
 ## Evolución
+
+### 2026-08-08 — Sesión 4
+- **Posiciones reservadas.** Al retirar 22 entradas que no existían, sus claves se quedaron
+  en `codeOrder` y pasaron a `retired[]`. `codeIndex` guarda un `null` en cada hueco, así que
+  **las 47 entradas posteriores conservan su posición** y los códigos generados antes siguen
+  decodificando bien. Borrarlas de `codeOrder` los habría corrompido todos en silencio.
+- `catalogVersion` → 3. Los códigos siguen midiendo 49 caracteres: el campo de bits mantiene
+  las 139 posiciones aunque solo 117 estén vivas.
+- La suite añadió una prueba que verifica exactamente eso.
 
 ### 2026-08-08 — Sesión 2
 - **Se cambió la base de la codificación de `catalog.flat` a `catalog.codeIndex`.** Es el

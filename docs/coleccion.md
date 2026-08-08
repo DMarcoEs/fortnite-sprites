@@ -15,8 +15,8 @@ Cada ficha cicla con un clic:
 
 | Clic | Estado | Valor |
 |---|---|---|
-| 1 | ✓ **La tengo** | `OWNED` = 1 |
-| 2 | ★ **Masterizada** | `MASTERED` = 2 |
+| 1 | ok **La tengo** | `OWNED` = 1 |
+| 2 | master **Masterizada** | `MASTERED` = 2 |
 | 3 | vuelve a **Me falta** | `NONE` = 0 |
 
 **Clic derecho** la marca como objetivo (ver [hunt-historial.md](hunt-historial.md)).
@@ -33,8 +33,8 @@ El juego tiene dos progresiones distintas y el sitio las lleva separadas:
   subiendo un sprite a nivel 5 y **extrayéndolo vivo**.
 
 > **Cómo se cuenta el Mastery:** un sprite cuenta como masterizado si marcaste su variante
-> **Base** como ★. Es una convención del sitio: el juego mastariza el sprite, no la variante,
-> y Base es la que todos los sprites tienen. Marcar ★ en una Gold cuenta para "variantes
+> **Base** como master. Es una convención del sitio: el juego mastariza el sprite, no la variante,
+> y Base es la que todos los sprites tienen. Marcar master en una Gold cuenta para "variantes
 > masterizadas" del subtítulo, pero no para el contador de 30.
 
 ### Dónde se guarda
@@ -63,7 +63,7 @@ respaldo viejo nunca rompa la app.
 ## Decisiones y por qué
 
 **Un botón de tres estados en vez de dos casillas.** Un clic para lo normal, dos para el
-caso menos frecuente. Dos casillas por ficha habrían duplicado los objetivos de clic en 139
+caso menos frecuente. Dos casillas por ficha habrían duplicado los objetivos de clic en 117
 entradas.
 
 **La fecha se fija sola y no se pisa.** Se guarda la primera vez que marcas algo como

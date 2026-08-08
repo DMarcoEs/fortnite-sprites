@@ -7,7 +7,7 @@
 <meta name="color-scheme" content="dark">
 <title>Comparar colecciones — Sprite Tracker</title>
 <meta name="description" content="Compara tu colección de Sprites de Fortnite con la de un amigo. Sin cuentas: solo un código.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%234c9aff'/><rect x='9' y='9' width='14' height='14' rx='4' fill='%23fff' opacity='.9'/></svg>">
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -15,12 +15,12 @@
 <header class="topbar">
   <div class="topbar-inner">
     <div class="brand">
-      <span class="logo">✨</span>
+      <span class="logo"></span>
       <span>Sprite Tracker<small>Fortnite · colección manual</small></span>
     </div>
     <nav class="nav">
       <a href="index.html">Colección</a>
-      <a href="compare.html" class="active">Comparar con amigos</a>
+      <a href="compare.html" class="active">Comparar</a>
     </nav>
   </div>
 </header>
@@ -30,13 +30,13 @@
   <div id="error" hidden class="error-banner"></div>
 
   <div class="card">
-    <h2>👥 Comparar con un amigo</h2>
+    <h2>Comparar con un amigo</h2>
     <p class="hint">Pega aquí el código (o el link completo) que te pasó tu amigo. Todo se calcula en tu navegador: no se sube nada a ningún servidor.</p>
     <div class="code-box">
-      <input id="their-code" placeholder="1.AbC123… o el link completo" autocomplete="off" spellcheck="false">
+      <input id="their-code" placeholder="3.AbC123… o el link completo" autocomplete="off" spellcheck="false">
       <button class="btn btn-primary btn-sm" id="do-compare">Comparar</button>
     </div>
-    <div class="row" style="margin-top:12px">
+    <div class="row" style="margin-top:14px">
       <input id="friend-name" class="text-input" placeholder="Nombre del amigo (opcional)" autocomplete="off" maxlength="40">
       <button class="btn btn-sm" id="save-friend">Guardar amigo</button>
       <select id="saved-friends" hidden></select>
@@ -44,7 +44,7 @@
   </div>
 
   <div class="card">
-    <h2>🔗 Tu código</h2>
+    <h2>Tu código</h2>
     <p class="hint">Mándaselo de vuelta para que él también pueda comparar.</p>
     <div class="code-box">
       <input id="my-code" readonly>
@@ -55,15 +55,14 @@
 
   <div id="result" hidden>
     <div class="stats" id="summary"></div>
-    <div class="row" style="margin-bottom:14px">
-      <button class="btn btn-sm" id="copy-text">📋 Copiar comparación como texto (para Discord)</button>
+    <div class="row" style="margin-bottom:16px">
+      <button class="btn btn-sm" id="copy-text">Copiar comparación como texto (para Discord)</button>
     </div>
     <div class="compare-grid" id="buckets"></div>
   </div>
 
   <div id="placeholder" class="empty-state">
-    <span class="big">🤝</span>
-    <div>Pega el código de tu amigo arriba para ver quién tiene qué.</div>
+    <div class="title">Pega el código de tu amigo arriba para ver quién tiene qué.</div>
   </div>
 
 </main>

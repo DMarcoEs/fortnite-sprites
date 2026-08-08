@@ -1,8 +1,8 @@
-# ✨ Sprite Tracker
+# Sprite Tracker
 
 Checklist para la colección de **Sprites de Fortnite**. Sin cuentas, sin servidor, sin costo.
 
-- **127 variantes lanzadas** repartidas en **30 sprites**, más 12 anunciadas que aún no salen.
+- **117 variantes** repartidas en **25 sprites**, cotejadas contra fortnite.gg.
 - Doble progreso: **Colección** (¿la tengo?) y **Mastery** (¿nivel 5 y extraída?).
 - **Comparación con amigos sin login**: tu colección entera cabe en un código de 49 caracteres.
 - Filtros, búsqueda, lista de búsqueda e historial con fechas.
@@ -14,11 +14,11 @@ Checklist para la colección de **Sprites de Fortnite**. Sin cuentas, sin servid
 
 | Clic | Estado |
 |---|---|
-| 1 | ✓ **La tengo** |
-| 2 | ★ **Master** (nivel 5 + extraída) |
+| 1 | ok **La tengo** |
+| 2 | master **Master** (nivel 5 + extraída) |
 | 3 | vuelve a **Me falta** |
 
-**Clic derecho** la agrega a tu lista de búsqueda 🎯. Al conseguirla sale sola.
+**Clic derecho** la agrega a tu lista de búsqueda . Al conseguirla sale sola.
 
 **Comparar** — *Datos → Copiar link* y mándaselo a un amigo. Al abrirlo verá al instante
 quién tiene qué, en cuatro grupos: solo yo / solo él / los dos / ninguno. Que te pase el
@@ -27,7 +27,7 @@ suyo de vuelta y comparas tú también.
 **Respaldar** — *Datos → Exportar JSON* guarda todo: estados, fechas, notas, hunt list y
 amigos. El código compartido solo lleva estados; el JSON lleva el resto.
 
-> ⚠️ Tus marcas viven en el `localStorage` de este navegador. Si borras los datos de
+> Tus marcas viven en el `localStorage` de este navegador. Si borras los datos de
 > navegación, las pierdes. Exporta de vez en cuando.
 
 ## Desarrollo local
@@ -45,7 +45,7 @@ Luego clic derecho en `index.html` → *Open with Live Server*.
 |---|---|
 | `index.html` | el sitio |
 | `compare.html` | comparación con amigos |
-| `test.html` | **60 pruebas** — ábrela tras cada cambio del catálogo |
+| `test.html` | **62 pruebas** — ábrela tras cada cambio del catálogo |
 | `test-seed.html` | siembra una colección de ejemplo para revisar el diseño |
 
 `test.html` respalda tu colección antes de correr y la restaura al terminar: abrirla no
@@ -56,8 +56,9 @@ borra nada.
 Todo el catálogo vive en **`data/sprites.json`**. No hace falta tocar código.
 
 **La regla que no se rompe:** `codeOrder` es **append-only**. Nunca reordenar, renombrar ni
-borrar una clave; las nuevas se pegan **al final**. Es lo que hace que un link compartido
-hoy siga funcionando el año que viene.
+borrar una clave; las nuevas se pegan **al final**. Si una entrada resulta no existir, se
+quita de `sprites` pero su clave se queda en `codeOrder` y pasa a `retired`, como posición
+reservada. Es lo que hace que un link compartido hoy siga funcionando el año que viene.
 
 El procedimiento completo está en **[docs/catalogo.md](docs/catalogo.md)**.
 

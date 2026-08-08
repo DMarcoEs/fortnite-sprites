@@ -10,7 +10,6 @@ import { computeStats, filterEntries, groupEntries, defaultFilters } from './js/
 const log = [];
 let pass = 0, fail = 0;
 const out = document.getElementById('out');
-// Se vuelca en cada paso: si algo se cuelga, se ve exactamente donde.
 const flush = () => { out.textContent = log.join('\n'); };
 const check = (name, cond, extra = '') => {
   (cond ? pass++ : fail++);
@@ -20,6 +19,7 @@ const check = (name, cond, extra = '') => {
 const section = t => { log.push('', `--- ${t} ---`); flush(); };
 window.addEventListener('error', e => { log.push('ERROR GLOBAL: ' + e.message); flush(); });
 window.addEventListener('unhandledrejection', e => { log.push('PROMESA RECHAZADA: ' + e.reason?.message); flush(); });
+
 const b64url = b => btoa(String.fromCharCode(...b)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 const file = (obj, name = 'b.json') =>
   new File([typeof obj === 'string' ? obj : JSON.stringify(obj)], name, { type: 'application/json' });
@@ -41,34 +41,47 @@ try {
   const validKeys = new Set(cat.byKey.keys());
 
   section('catalogo');
-  check('30 sprites', cat.sprites.length === 30, cat.sprites.length);
-  check('139 entradas totales', cat.totalAll === 139, cat.totalAll);
-  check('127 lanzadas', cat.totalReleased === 127, cat.totalReleased);
-  check('12 anunciadas sin lanzar', cat.totalAll - cat.totalReleased === 12);
-  check('catalogVersion = 2', cat.catalogVersion === 2, cat.catalogVersion);
-  check('punk:gem sigue sin lanzar', cat.byKey.get('punk:gem').released === false);
-  check('fire:gem existe y no ha salido', cat.byKey.get('fire:gem')?.released === false);
-  check('fishy:holofoil existe y esta lanzada', cat.byKey.get('fishy:holofoil')?.released === true);
-  check('sprites de Override presentes', ['xray','pond','honey','dumpster','bullet']
-        .every(id => cat.byKey.get(`${id}:base`)?.released === false));
+  check('25 sprites', cat.sprites.length === 25, cat.sprites.length);
+  check('117 entradas vivas', cat.totalAll === 117, cat.totalAll);
+  check('117 lanzadas (ninguna pendiente)', cat.totalReleased === 117, cat.totalReleased);
+  check('catalogVersion = 3', cat.catalogVersion === 3, cat.catalogVersion);
+  check('22 posiciones reservadas', cat.retired.size === 22, cat.retired.size);
 
-  section('codeOrder — el invariante critico');
-  check('codeIndex y flat tienen el mismo tamano', cat.codeIndex.length === cat.flat.length);
-  const setCode = new Set(cat.codeIndex.map(e => e.key));
-  const setFlat = new Set(cat.flat.map(e => e.key));
-  check('mismo conjunto de claves en ambos ordenes',
-        setCode.size === setFlat.size && [...setFlat].every(k => setCode.has(k)));
-  check('sin duplicados en codeIndex', setCode.size === cat.codeIndex.length);
-  check('el orden de presentacion SI difiere del de codificacion',
-        cat.flat.findIndex(e => e.key === 'fire:gem') !== cat.codeIndex.findIndex(e => e.key === 'fire:gem'),
-        `flat #${cat.flat.findIndex(e=>e.key==='fire:gem')} vs code #${cat.codeIndex.findIndex(e=>e.key==='fire:gem')}`);
+  section('las variantes retiradas ya no existen');
+  const retiradas = ['fire:gem','ghost:gem','dream:gem','punk:gem','boss:gem','boss:holofoil',
+                     'air:gem','seven:gem','batman:gem','fishy:gem','fishy:holofoil','striker:gem',
+                     'aura:holofoil','lootin-llama:holofoil','lootin-llama:cube',
+                     'peeky-peely:gem','peeky-peely:cube'];
+  check('ninguna variante retirada aparece en el catalogo',
+        retiradas.every(k => !cat.byKey.has(k)));
+  check('los 5 sprites de Override ya no estan',
+        ['xray','pond','honey','dumpster','bullet'].every(id => !cat.byKey.has(`${id}:base`)));
+  check('todas siguen en retired[]', retiradas.every(k => cat.retired.has(k)));
+  check('las que si existen siguen ahi',
+        ['water:gem','earth:cube','zero-point:quack','grim:gem','batman:cube','duck:gem']
+          .every(k => cat.byKey.has(k)));
+
+  section('codeOrder y posiciones reservadas');
+  check('codeIndex conserva las 139 posiciones', cat.codeIndex.length === 139, cat.codeIndex.length);
+  check('117 posiciones vivas', cat.codeIndex.filter(Boolean).length === 117);
+  check('22 huecos reservados', cat.codeIndex.filter(e => e === null).length === 22);
+  const setCode = new Set(cat.codeIndex.filter(Boolean).map(e => e.key));
+  check('mismo conjunto de claves vivas en ambos ordenes',
+        setCode.size === cat.flat.length && cat.flat.every(e => setCode.has(e.key)));
+  // punk:gem se retiro y dejo un hueco a media lista, asi que todo lo que va
+  // despues ocupa distinta posicion en cada orden. Ese desfase es justo lo que
+  // evita que los codigos viejos se corrompan.
+  const desfase = cat.flat.filter(e =>
+    cat.flat.indexOf(e) !== cat.codeIndex.findIndex(x => x?.key === e.key));
+  check('el orden de presentacion difiere del de codificacion',
+        desfase.length > 0, `${desfase.length} entradas desfasadas`);
 
   section('coleccion de prueba');
   const marked = [
     ['water:base', MASTERED], ['water:gold', OWNED], ['zero-point:quack', MASTERED],
     ['john-wick:base', OWNED], ['grim:cube', OWNED], ['punk:cube', MASTERED],
-    ['air:holofoil', OWNED], ['boss:base', MASTERED], ['fishy:holofoil', OWNED],
-    ['peeky-peely:cube', MASTERED],
+    ['air:holofoil', OWNED], ['boss:base', MASTERED], ['batman:cube', OWNED],
+    ['peeky-peely:holofoil', MASTERED],
   ];
   for (const [k, s] of marked) store.setStatus(k, s);
 
@@ -80,44 +93,48 @@ try {
         store.getEntry('water:base').date);
 
   const stats = computeStats(cat, store.getStatus);
-  check('stats: 10 obtenidas de 127', stats.collection.owned === 10 && stats.collection.total === 127,
+  check('stats: 10 obtenidas de 117', stats.collection.owned === 10 && stats.collection.total === 117,
         `${stats.collection.owned}/${stats.collection.total}`);
   check('stats: 5 masterizadas', stats.collection.mastered === 5, stats.collection.mastered);
   check('stats: mastery de sprites = 2', stats.masteredSprites === 2, stats.masteredSprites);
-  check('stats: las no lanzadas no cuentan en el total',
-        [...stats.byVariant.values()].reduce((a, b) => a + b.total, 0) === 127);
+  check('stats: los desgloses suman 117',
+        [...stats.byVariant.values()].reduce((a, b) => a + b.total, 0) === 117);
 
   section('codigo para compartir');
   const code = encodeCollection(cat, store.getStatus);
   check('codigo mide 49 caracteres', code.length === 49, `${code.length}: ${code}`);
-  check('lleva el prefijo de version 2', code.startsWith('2.'));
+  check('lleva el prefijo de version 3', code.startsWith('3.'));
   const { statuses } = decodeCollection(cat, code);
-  check('round-trip exacto en las 139 entradas',
+  check('round-trip exacto en las 117 entradas vivas',
         cat.flat.every(e => statuses.get(e.key) === store.getStatus(e.key)));
+  check('no inventa estados para las retiradas',
+        retiradas.every(k => !statuses.has(k)));
   check('acepta el link completo pegado',
         decodeCollection(cat, buildShareUrl(code)).statuses.get('water:base') === MASTERED);
 
-  section('compatibilidad hacia atras (la prueba que justifica codeOrder)');
-  // Se fabrica un codigo "de la epoca v1", cuando el catalogo tenia 118 entradas
-  // y ni fire:gem ni los sprites de Override existian.
+  section('compatibilidad hacia atras (lo que justifica codeOrder)');
+  // Codigo "de la epoca v1", cuando el catalogo tenia 118 entradas y ni fire:gem
+  // ni los sprites de Override existian. Las posiciones se conservan intactas.
   const OLD_N = 118;
   const oldBytes = new Uint8Array(Math.ceil(OLD_N * 2 / 8));
   cat.codeIndex.slice(0, OLD_N).forEach((e, i) => {
+    if (!e) return;
     const bit = i * 2;
     oldBytes[bit >> 3] |= store.getStatus(e.key) << (bit & 7);
   });
   const oldCode = `1.${b64url(oldBytes)}`;
   check('el codigo viejo es mas corto', oldCode.length < code.length, `${oldCode.length} vs ${code.length}`);
   const oldDec = decodeCollection(cat, oldCode);
-  check('un codigo viejo decodifica IDENTICO las 118 entradas que ya existian',
-        cat.codeIndex.slice(0, OLD_N).every(e => oldDec.statuses.get(e.key) === store.getStatus(e.key)));
-  check('y las 21 entradas nuevas salen como "no la tengo"',
-        cat.codeIndex.slice(OLD_N).every(e => oldDec.statuses.get(e.key) === NONE));
-  check('en particular fishy:holofoil (marcada hoy) sale NONE en el codigo viejo',
-        oldDec.statuses.get('fishy:holofoil') === NONE);
+  check('un codigo viejo decodifica IDENTICO las entradas que ya existian',
+        cat.codeIndex.slice(0, OLD_N).filter(Boolean)
+          .every(e => oldDec.statuses.get(e.key) === store.getStatus(e.key)));
+  check('las entradas posteriores salen como "no la tengo"',
+        cat.codeIndex.slice(OLD_N).filter(Boolean).every(e => oldDec.statuses.get(e.key) === NONE));
+  check('retirar 22 entradas NO corrio las posiciones siguientes',
+        oldDec.statuses.get('batman:cube') === OWNED && oldDec.statuses.get('john-wick:base') === OWNED);
 
   section('codigos invalidos');
-  for (const bad of ['basura', '2.@@@@', '', 'AbC123', '2.' + 'A'.repeat(500)]) {
+  for (const bad of ['basura', '3.@@@@', '', 'AbC123', '3.' + 'A'.repeat(500)]) {
     let threw = false;
     try { decodeCollection(cat, bad); } catch { threw = true; }
     check(`"${bad.slice(0, 14)}${bad.length > 14 ? '…' : ''}" lanza error legible`, threw);
@@ -135,7 +152,7 @@ try {
   check('1 en "ambos"', b.both === 1, b.both);
   check('9 solo mios', b.mine === 9, b.mine);
   check('2 solo suyos', b.theirs === 2, b.theirs);
-  check('los 4 grupos suman 127', b.mine + b.theirs + b.both + b.none === 127);
+  check('los 4 grupos suman 117', b.mine + b.theirs + b.both + b.none === 117);
 
   section('filtros');
   const f = defaultFilters();
@@ -144,19 +161,17 @@ try {
   check('buscar "grim" deja solo Grim Reaper',
         new Set(filterEntries(cat, f, ctx).map(e => e.spriteId)).size === 1);
   f.search = ''; f.rarity = 'mythic';
-  check('filtro Mythic da 32', filterEntries(cat, f, ctx).length === 32, filterEntries(cat, f, ctx).length);
-  f.rarity = 'all'; f.season = 'c7s4';
-  check('filtro temporada Override da 5', filterEntries(cat, f, ctx).length === 5, filterEntries(cat, f, ctx).length);
-  f.season = 'all'; f.status = 'owned';
+  check('filtro Mythic da 26', filterEntries(cat, f, ctx).length === 26, filterEntries(cat, f, ctx).length);
+  f.rarity = 'all'; f.status = 'owned';
   check('filtro "ya los tengo" da 10', filterEntries(cat, f, ctx).length === 10, filterEntries(cat, f, ctx).length);
   f.status = 'all'; f.variant = 'gem';
-  check('filtro variante Gem da 19', filterEntries(cat, f, ctx).length === 19, filterEntries(cat, f, ctx).length);
+  check('filtro variante Gem da 8', filterEntries(cat, f, ctx).length === 8, filterEntries(cat, f, ctx).length);
   f.variant = 'all'; f.groupBy = 'rarity';
   check('agrupar por rareza da 4 grupos', groupEntries(cat, filterEntries(cat, f, ctx), f).length === 4);
   f.groupBy = 'variant';
   check('agrupar por variante da 8 grupos', groupEntries(cat, filterEntries(cat, f, ctx), f).length === 8);
   f.groupBy = 'sprite';
-  check('agrupar por sprite da 30 grupos', groupEntries(cat, filterEntries(cat, f, ctx), f).length === 30);
+  check('agrupar por sprite da 25 grupos', groupEntries(cat, filterEntries(cat, f, ctx), f).length === 25);
 
   section('hunt list');
   store.toggleHunt('demon:gem');
@@ -165,8 +180,8 @@ try {
   check('obtenerlo lo saca de la lista', !store.isHunted('demon:gem'));
 
   section('respaldo e import saneado');
-  const snapshot = JSON.stringify(store.loadState());
   const expected = encodeCollection(cat, store.getStatus);
+  const snapshot = JSON.stringify(store.loadState());
   store.resetAll();
   check('reset deja la coleccion en 0', computeStats(cat, store.getStatus).collection.owned === 0);
   const r1 = await store.importJSON(file(snapshot), validKeys);
@@ -176,13 +191,14 @@ try {
   const r2 = await store.importJSON(file({ entries: {
     'water:base': { status: 1 },
     'sprite:inventado': { status: 1 },
+    'fire:gem': { status: 1 },
     'water:gold': { status: 99 },
     'water:gummy': { status: -1 },
     'fire:base': 'no soy un objeto',
     'earth:base': { status: 2, date: 'no-es-fecha', note: 'x'.repeat(9000) },
   } }), validKeys);
-  check('descarta claves inventadas y estados invalidos',
-        r2.importadas === 2 && r2.descartadas === 4, JSON.stringify(r2));
+  check('descarta claves inventadas, retiradas y estados invalidos',
+        r2.importadas === 2 && r2.descartadas === 5, JSON.stringify(r2));
   check('sanea una fecha invalida', store.getEntry('earth:base').date === '');
   check('recorta notas larguisimas', store.getEntry('earth:base').note.length === 500);
 
@@ -205,20 +221,25 @@ try {
   check('toda entrada tiene ruta de imagen',
         cat.flat.every(e => e.img === `img/sprites/${e.spriteId}-${e.variantId}.png`));
   const exists = n => fetch(`img/sprites/${n}.png`).then(r => r.ok).catch(() => false);
-  const hay = await Promise.all(['water-gold', 'grim-base', 'zero-point-quack', 'bullet-base'].map(exists));
-  check('las imagenes descargadas existen', hay.every(Boolean), hay.join(', '));
-  // Estas 12 el repo de referencia aun no las publica: deben caer al fallback, no romper.
-  const faltan = await Promise.all(['fishy-holofoil', 'aura-holofoil', 'batman-gem'].map(exists));
-  check('las que faltan devuelven 404 (activan el fallback)', faltan.every(x => x === false), faltan.join(', '));
-  // Por lotes: 139 peticiones a la vez hacen que un CDN (GitHub Pages) estrangule
-  // parte de ellas y den falsos 404. De 8 en 8 el resultado es estable.
+  // Por lotes: 117 peticiones a la vez hacen que un CDN estrangule parte de ellas
+  // y den falsos 404. De 8 en 8 el resultado es estable.
   let totalImgs = 0;
   for (let i = 0; i < cat.flat.length; i += 8) {
     const lote = cat.flat.slice(i, i + 8);
     const res = await Promise.all(lote.map(e => exists(`${e.spriteId}-${e.variantId}`)));
     totalImgs += res.filter(Boolean).length;
   }
-  check('127 de 139 entradas tienen imagen', totalImgs === 127, totalImgs);
+  check('las 117 entradas tienen imagen', totalImgs === 117, totalImgs);
+  const borradas = await Promise.all(['fire-gem', 'bullet-base', 'batman-gem'].map(exists));
+  check('las imagenes de entradas retiradas se borraron', borradas.every(x => x === false), borradas.join(', '));
+
+  section('sin emojis en la interfaz');
+  const rxEmoji = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{2B00}-\u{2BFF}]/u;
+  const htmls = await Promise.all(['index.html', 'compare.html'].map(p => fetch(p).then(r => r.text())));
+  check('index.html y compare.html no tienen emojis', htmls.every(h => !rxEmoji.test(h)));
+  const jss = await Promise.all(['render', 'compare', 'app', 'store', 'share', 'filters', 'catalog']
+    .map(m => fetch(`js/${m}.js`).then(r => r.text())));
+  check('ningun modulo JS tiene emojis', jss.every(s => !rxEmoji.test(s)));
 
 } catch (err) {
   fail++;

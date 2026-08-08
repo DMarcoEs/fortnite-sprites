@@ -27,7 +27,7 @@ winget install --id GitHub.cli
 
 ## 2. Autenticarte
 
-> ⚠️ **Los menús de `gh` se navegan con FLECHAS y Enter, no escribiendo la respuesta.**
+> **Los menús de `gh` se navegan con FLECHAS y Enter, no escribiendo la respuesta.**
 > Si tecleas `GitHub.com` y pulsas Enter, ese texto acaba en PowerShell y verás
 > `El término 'GitHub.com' no se reconoce...`.
 >
@@ -55,7 +55,7 @@ Copia el código, pulsa **Enter**, pégalo en el navegador y autoriza. Si aparec
 
 **Verifica:** `gh auth status` debe decir `Logged in to github.com as <tu-usuario>`.
 
-## 3. 🔒 Blindar tu correo — ANTES del primer push
+## 3.  Blindar tu correo — ANTES del primer push
 
 **Este es el momento.** Git guarda el correo del autor en cada commit y, al hacer público
 el repositorio, **queda visible para cualquiera de forma permanente**. Después del push ya
@@ -107,8 +107,8 @@ Esto es lo que convierte "lo configuré bien" en "es imposible equivocarse".
 
 **github.com → Settings de tu cuenta → Emails:**
 
-- ✅ **Keep my email addresses private**
-- ✅ **Block command line pushes that expose my email**
+- Marca **Keep my email addresses private**
+- Marca **Block command line pushes that expose my email**
 
 La segunda es la importante: **GitHub rechaza cualquier push que contenga tu correo
 personal**, desde el servidor. Aunque cambies de computadora y se te olvide configurar git,
@@ -203,7 +203,7 @@ Pages se reconstruye solo en ~1 minuto.
 3. Marca unas variantes y recarga: deben seguir marcadas.
 4. **Datos → Copiar link**, ábrelo en una ventana privada y confirma que la comparación
    sale bien.
-5. Abre `<tu-url>/test.html`: debe decir **60 pasaron, 0 fallaron**.
+5. Abre `<tu-url>/test.html`: debe decir **62 pasaron, 0 fallaron**.
 
 ## Problemas comunes
 

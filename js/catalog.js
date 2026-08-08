@@ -10,8 +10,13 @@
 //                      Es APPEND-ONLY: la posicion de cada entrada es su identidad
 //                      dentro del codigo para compartir. Solo lo usa share.js.
 //
-// Separarlos es lo que permite que Epic agregue una variante en medio (como la tanda
-// de Gem, que se mete en Fire y Ghost) sin invalidar los codigos ya compartidos.
+// Separarlos permite agregar una variante en medio de la lista sin invalidar los
+// codigos ya compartidos.
+//
+// POSICIONES RESERVADAS: si una entrada resulta no existir y se quita de sprites[],
+// su clave se QUEDA en codeOrder. codeIndex guarda un null en ese hueco, de modo que
+// todas las posiciones siguientes conservan su sitio y los codigos viejos siguen
+// decodificando bien.
 
 /** @typedef {{key:string, spriteId:string, variantId:string, sprite:object, variant:object, released:boolean, img:string}} Entry */
 
@@ -81,6 +86,7 @@ export async function loadCatalog() {
   // --- Validacion critica de codeOrder ---
   // Si esto se rompe, los codigos ya compartidos decodifican sprites equivocados.
   const codeOrder = raw.codeOrder ?? [];
+  const retired = new Set(raw.retired ?? []);
   const seenInCode = new Set();
   const codeIndex = [];
 
@@ -90,16 +96,29 @@ export async function loadCatalog() {
       continue;
     }
     seenInCode.add(key);
+
     const entry = byKey.get(key);
-    if (!entry) {
-      problems.push(`codeOrder menciona "${key}", que no existe en sprites[]`);
-      continue;
+    if (entry) {
+      codeIndex.push(entry);
+    } else if (retired.has(key)) {
+      // Posicion reservada: la entrada se retiro, pero su hueco se conserva
+      // para no correr las posiciones siguientes.
+      codeIndex.push(null);
+    } else {
+      problems.push(
+        `codeOrder menciona "${key}", que no esta en sprites[] ni en retired[]. ` +
+        `Si la retiraste a proposito, agregala a retired[]; nunca la borres de codeOrder.`
+      );
     }
-    codeIndex.push(entry);
   }
   for (const entry of flat) {
     if (!seenInCode.has(entry.key)) {
       problems.push(`"${entry.key}" existe en sprites[] pero falta en codeOrder (agregala AL FINAL)`);
+    }
+  }
+  for (const key of retired) {
+    if (byKey.has(key)) {
+      problems.push(`"${key}" esta en retired[] pero sigue viva en sprites[]: decide una de las dos`);
     }
   }
 
@@ -115,7 +134,8 @@ export async function loadCatalog() {
     seasonList: raw.seasons,
     variants, rarities, seasons,
     flat,       // presentacion
-    codeIndex,  // codificacion (append-only)
+    codeIndex,  // codificacion (append-only; null = posicion reservada)
+    retired,
     byKey,
     /** Entradas ya disponibles en el juego. Es el denominador que se muestra. */
     totalReleased: flat.filter(e => e.released).length,

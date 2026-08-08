@@ -9,20 +9,20 @@ Dos funciones pequeñas que cierran el ciclo: **antes** de la partida decides qu
 
 ## Cómo funciona
 
-### 🎯 Buscando ahora
+### Buscando ahora
 
 - **Clic derecho** sobre cualquier ficha la marca o desmarca como objetivo.
-- Las marcadas llevan 🎯 y borde azul en toda la colección, no solo en su pestaña.
+- Las marcadas llevan  y borde azul en toda la colección, no solo en su pestaña.
 - La pestaña **Buscando** las junta con el nombre del sprite visible.
 - El filtro *"En mi lista de búsqueda"* hace lo mismo sin cambiar de pestaña.
 
 **Al marcar una como obtenida, sale sola de la lista.** Está en `setStatus()`, no en la
 interfaz: conseguir algo es dejar de buscarlo, y no debería costar un clic extra.
 
-### 📖 Historial
+### Historial
 
 Línea de tiempo de todo lo conseguido, de lo más reciente a lo más antiguo, con la
-miniatura, el nombre, la variante en su color, ★ si está masterizada y la nota si escribiste
+miniatura, el nombre, la variante en su color, master si está masterizada y la nota si escribiste
 alguna.
 
 La fecha se guarda **automáticamente** al marcar algo como obtenido, en formato `AAAA-MM-DD`,

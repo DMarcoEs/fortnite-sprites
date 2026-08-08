@@ -14,10 +14,10 @@ import { pct } from './filters.js';
 const $ = sel => document.querySelector(sel);
 
 const BUCKETS = [
-  { id: 'mine',   title: '✅ Solo yo lo tengo',   hint: 'Presume estos.' },
-  { id: 'theirs', title: '🔥 Solo él lo tiene',   hint: 'Estos te faltan a ti.' },
-  { id: 'both',   title: '🤝 Los dos lo tenemos', hint: '' },
-  { id: 'none',   title: '❌ Ninguno lo tiene',   hint: 'A cazar juntos.' },
+  { id: 'mine',   title: 'Solo yo lo tengo',   hint: 'Presume estos.' },
+  { id: 'theirs', title: 'Solo él lo tiene',   hint: 'Estos te faltan a ti.' },
+  { id: 'both',   title: 'Los dos lo tenemos', hint: '' },
+  { id: 'none',   title: 'Ninguno lo tiene',   hint: 'A cazar juntos.' },
 ];
 
 function fraction(num, den) {
@@ -172,7 +172,7 @@ async function main() {
       `**${title}** — ${list.length}\n${list.length ? list.map(e => `· ${line(e)}`).join('\n') : '· nada'}`;
 
     copy([
-      `Comparacion de Sprites — yo vs. ${friend}`,
+      `Comparacion de Sprites - yo vs. ${friend}`,
       section('Solo yo lo tengo', lastResult.mine),
       section(`Solo ${friend} lo tiene`, lastResult.theirs),
       section('Nos faltan a los dos', lastResult.none),

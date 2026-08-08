@@ -7,7 +7,7 @@
 <meta name="color-scheme" content="dark">
 <title>Sprite Tracker — Colección de Sprites de Fortnite</title>
 <meta name="description" content="Checklist de los Sprites de Fortnite: variantes, mastery, estadísticas y comparación con amigos. Sin cuenta, sin servidor.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%234c9aff'/><rect x='9' y='9' width='14' height='14' rx='4' fill='%23fff' opacity='.9'/></svg>">
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -15,7 +15,7 @@
 <header class="topbar">
   <div class="topbar-inner">
     <div class="brand">
-      <span class="logo">✨</span>
+      <span class="logo"></span>
       <span>Sprite Tracker<small>Fortnite · colección manual</small></span>
     </div>
     <nav class="nav">
@@ -40,7 +40,6 @@
       <div class="search"><input id="search" type="search" placeholder="Buscar sprite o variante…" autocomplete="off"></div>
       <select id="f-rarity"><option value="all">Todas las rarezas</option></select>
       <select id="f-variant"><option value="all">Todas las variantes</option></select>
-      <select id="f-season"><option value="all">Todas las temporadas</option></select>
       <select id="f-status">
         <option value="all">Todos</option>
         <option value="missing">Me faltan</option>
@@ -63,7 +62,7 @@
       <span><i class="dim"></i> Me falta</span>
       <span><i></i> La tengo</span>
       <span><i class="master"></i> Masterizada</span>
-      <span>🎯 En búsqueda</span>
+      <span><i class="hunt"></i> En búsqueda</span>
       <span style="margin-left:auto">Clic = cambiar estado · Clic derecho = marcar objetivo</span>
     </div>
 
@@ -73,7 +72,7 @@
   <!-- ===== Buscando ahora ===== -->
   <section data-panel="hunt" hidden>
     <div class="card">
-      <h2>🎯 Buscando ahora</h2>
+      <h2>Buscando ahora</h2>
       <p class="hint">Tus objetivos para la próxima partida. Al marcar uno como obtenido sale solo de esta lista.</p>
       <div id="hunt"></div>
     </div>
@@ -82,7 +81,7 @@
   <!-- ===== Historial ===== -->
   <section data-panel="historial" hidden>
     <div class="card">
-      <h2>📖 Historial</h2>
+      <h2>Historial</h2>
       <p class="hint">Cada variante con la fecha en la que la conseguiste, de la más reciente a la más antigua.</p>
       <div id="historial"></div>
     </div>
@@ -91,7 +90,7 @@
   <!-- ===== Datos ===== -->
   <section data-panel="datos" hidden>
     <div class="card">
-      <h2>🔗 Tu código para compartir</h2>
+      <h2>Tu código para compartir</h2>
       <p class="hint">Toda tu colección cabe en este código. Mándaselo a un amigo y podrá comparar su lista con la tuya al instante, sin que ninguno de los dos cree una cuenta. Viaja después del <code>#</code> de la URL, así que ni GitHub ve qué sprites tienes.</p>
       <div class="code-box">
         <input id="my-code" readonly>
@@ -101,7 +100,7 @@
     </div>
 
     <div class="card">
-      <h2>💾 Respaldo completo</h2>
+      <h2>Respaldo completo</h2>
       <p class="hint">El archivo JSON guarda todo: estados, fechas, notas, lista de búsqueda y amigos guardados. Úsalo para cambiar de navegador o de computadora.</p>
       <div class="row">
         <button class="btn btn-primary" id="export">Exportar JSON</button>
@@ -112,9 +111,9 @@
     </div>
 
     <div class="card">
-      <h2>🧩 Catálogo</h2>
+      <h2>Catálogo</h2>
       <p class="hint" id="catalog-info"></p>
-      <p class="hint" style="margin:0">Cuando salga una temporada nueva solo hay que agregar los sprites al final de <code>data/sprites.json</code> y sus claves al final de <code>codeOrder</code>. No se toca nada de código y los links ya compartidos siguen funcionando.</p>
+      <p class="hint" style="margin:0">Cuando salga contenido nuevo solo hay que agregarlo al final de <code>data/sprites.json</code> y sus claves al final de <code>codeOrder</code>. No se toca nada de código y los links ya compartidos siguen funcionando.</p>
     </div>
   </section>
 

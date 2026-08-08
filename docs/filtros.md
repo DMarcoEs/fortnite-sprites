@@ -2,7 +2,7 @@
 
 ## Qué hace
 
-Encontrar rápido lo que buscas entre 139 entradas, y ver el progreso desglosado.
+Encontrar rápido lo que buscas entre 117 entradas, y ver el progreso desglosado.
 
 **Archivos:** [`js/filters.js`](../js/filters.js) · [`js/render.js`](../js/render.js)
 
@@ -18,7 +18,6 @@ variante → temporada → estado. Después `groupEntries()` agrupa y ordena el 
 | Búsqueda | por nombre de sprite o de variante, sin distinguir mayúsculas |
 | Rareza | Rare · Epic · Legendary · Mythic |
 | Variante | las 8 |
-| Temporada | Runners (C7S3) · Override (C7S4) |
 | Estado | todos · me faltan · ya los tengo · masterizados · en búsqueda |
 | Agrupar por | sprite · variante · rareza |
 | Orden | rareza · A-Z |
@@ -39,7 +38,7 @@ porque el título del grupo ya no lo dice.
 - **Desglose por variante** — barra por cada una
 
 > **Las entradas no lanzadas no cuentan.** El denominador es siempre `totalReleased` (127),
-> no `totalAll` (139). Si contaran, tu porcentaje bajaría cada vez que Epic anuncia algo,
+> no `totalAll`. Si contaran, tu porcentaje bajaría cada vez que Epic anuncia algo,
 > lo cual es absurdo.
 
 Cada barra usa el color de su rareza o variante, tomado del JSON.
@@ -49,7 +48,7 @@ Cada barra usa el color de su rareza o variante, tomado del JSON.
 **Filtros en la barra, no en un panel plegable.** Con seis controles cabe todo en una fila
 y se ve el estado del filtrado sin abrir nada.
 
-**Se repinta todo en cada cambio.** Con 139 fichas la diferencia es imperceptible y evita
+**Se repinta todo en cada cambio.** Con 117 fichas la diferencia es imperceptible y evita
 por completo los bugs de sincronización de un renderizado incremental. Si el catálogo
 creciera mucho, aquí es donde habría que optimizar.
 
@@ -60,6 +59,12 @@ pregunta natural en un juego donde las variantes son la parte difícil.
 mucho mejor que el total.
 
 ## Evolución
+
+### 2026-08-08 — Sesión 4
+- **Se quitó el filtro por temporada.** Al retirar los sprites de Season 4 quedó una sola
+  temporada, y un desplegable con una opción solo estorba. El código que lo soporta sigue en
+  `filters.js` para cuando salga la siguiente.
+- Los denominadores pasaron de 127 a **117**.
 
 ### 2026-08-08 — Sesión 2
 - **Nuevo filtro por temporada**, necesario al entrar Chapter 7 Season 4.

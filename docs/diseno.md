@@ -37,14 +37,14 @@ Y el CSS los consume sin saber qué variantes existen:
 
 El color dice *qué variante es*; la intensidad dice *si la tienes*. Dos señales que no compiten.
 
-| Estado | Degradado | Imagen | Marca |
+| Estado | Degradado | Imagen | Botón al pie |
 |---|---|---|---|
-| **Me falta** | 16% de opacidad | gris, al 50% | — |
-| **La tengo** | pleno | a color | ✓ |
-| **Masterizada** | pleno + anillo dorado y brillo | a color | ★ |
+| **Me falta** | 22% de opacidad | gris, al 55% | gris, "Me falta" |
+| **La tengo** | pleno | a color | con el degradado de la variante, "La tengo" |
+| **Masterizada** | pleno + anillo dorado | a color | dorado, "Master" |
 
-Extras: las marcadas como objetivo llevan borde azul y 🎯; las **no lanzadas** van con borde
-punteado, imagen casi transparente y nombre en cursiva, y no se pueden marcar.
+Las marcadas como objetivo llevan borde azul y un punto azul en la esquina. Nada de esto usa
+iconos ni emojis: son formas dibujadas con CSS.
 
 ### Paleta de variantes
 
@@ -70,12 +70,16 @@ punteado, imagen casi transparente y nombre en cursiva, y no se pueden marcar.
 
 ### Responsive
 
-Un solo breakpoint en 600 px: las fichas bajan de 92 a 76 px, se reduce el padding y las
-estadísticas se compactan. El grid usa `flex-wrap`, así que entre medias se adapta solo.
+El grid de tarjetas usa `repeat(auto-fill, minmax(148px, 1fr))`, así que se adapta solo a
+cualquier ancho. Un breakpoint en 700 px baja el mínimo a 116 px y reduce el padding.
 
 ## Decisiones y por qué
 
-**Color pleno por variante, elegido sobre "acento sutil" y "solo al tenerla".** Con 139
+**Sin emojis, en ninguna parte.** Ni en la interfaz, ni en la documentación, ni en el
+favicon. Los emojis decorativos hacen que un sitio parezca generado automáticamente. Lo que
+antes marcaba un emoji ahora lo dice una palabra o una forma dibujada con CSS.
+
+**Color pleno por variante, elegido sobre "acento sutil" y "solo al tenerla".** Con 117
 entradas repartidas en 8 variantes, el color es lo que permite escanear la página de un
 vistazo. Un acento sutil habría sido más elegante y menos útil.
 
@@ -93,6 +97,18 @@ que el proyecto entero y romperían la promesa de "sin build".
 
 ## Evolución
 
+### 2026-08-08 — Sesión 4
+- **Rediseño de las tarjetas al estilo de fortnite.gg**, manteniendo nuestra distribución
+  agrupada por sprite y con aire entre elementos. La estructura pasó a ser: imagen grande
+  sobre el degradado de su variante, nombre debajo, y un botón de estado al pie.
+- **Imágenes mucho más grandes**: las tarjetas pasaron de 92 px a un grid fluido desde
+  148 px, y las imágenes se re-renderizaron a 192 px. Antes se veían pequeñas y borrosas.
+- **Se eliminaron todos los emojis** de la interfaz. El logo, el favicon, el icono de
+  búsqueda y el marcador de objetivo son ahora formas CSS o SVG. Los estados dejaron de
+  usar glifos y los dice el botón con palabras.
+- El grid pasó de `flex-wrap` a `grid` con `auto-fill`, para que las tarjetas queden
+  alineadas en columnas en vez de amontonarse.
+
 ### 2026-08-08 — Sesión 2
 - **Rediseño completo.** Se reescribió `styles.css`.
 - Las fichas pasaron de texto sobre color a **imagen del sprite sobre el degradado de su
@@ -100,7 +116,7 @@ que el proyecto entero y romperían la promesa de "sin build".
 - Se añadió `color2` y el sistema `--v1`/`--v2` inyectado desde JS, para que el CSS no
   necesite conocer las variantes.
 - Se rediseñaron los tres estados: antes eran cambios de fondo; ahora opacidad del degradado
-  + desaturación de la imagen + marca ✓/★.
+  + desaturación de la imagen + marca ok/master.
 - Se bajó el ruido general: menos bordes, más aire, tipografía con más jerarquía, panel de
   estadísticas menos dominante.
 - Se añadió soporte de `prefers-reduced-motion` y `:focus-visible`.

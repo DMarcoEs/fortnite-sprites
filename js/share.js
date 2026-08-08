@@ -33,6 +33,7 @@ export function encodeCollection(catalog, getStatusFn) {
   const bytes = new Uint8Array(Math.ceil((n * 2) / 8));
 
   catalog.codeIndex.forEach((entry, i) => {
+    if (!entry) return;   // posicion reservada: se deja en 0 y se conserva el hueco
     const status = Math.min(Math.max(getStatusFn(entry.key) | 0, NONE), MASTERED);
     const bit = i * 2;
     // bit siempre es par, asi que los 2 bits nunca cruzan un byte.
@@ -74,6 +75,7 @@ export function decodeCollection(catalog, input) {
 
   const statuses = new Map();
   catalog.codeIndex.forEach((entry, i) => {
+    if (!entry) return;   // posicion reservada: se salta, pero cuenta para el offset
     const bit = i * 2;
     const byte = bytes[bit >> 3] ?? 0;
     const value = (byte >> (bit & 7)) & 0b11;

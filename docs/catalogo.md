@@ -17,8 +17,8 @@ confundir:
 
 | Lista | Orden | La usa | ¿Se puede reordenar? |
 |---|---|---|---|
-| `catalog.flat` | Presentación: `sprites[]` → `variants[]` | filtros, estadísticas, render | ✅ Sí, libremente |
-| `catalog.codeIndex` | Codificación: tal cual `codeOrder[]` | **solo** `share.js` | ❌ **Jamás** |
+| `catalog.flat` | Presentación: `sprites[]` → `variants[]` | filtros, estadísticas, render | Sí, libremente |
+| `catalog.codeIndex` | Codificación: tal cual `codeOrder[]` | **solo** `share.js` | **Jamás** |
 
 Además expone `byKey` (mapa `"water:gold" → entrada`), los catálogos de variantes, rarezas
 y temporadas, y los totales `totalReleased` / `totalAll`.
@@ -39,7 +39,7 @@ Esa última es la importante: es la red que impide romper los links compartidos 
 
 ```jsonc
 {
-  "catalogVersion": 2,
+  "catalogVersion": 3,
 
   "variants": [
     { "id": "gold", "name": "Gold", "color": "#f5c542", "color2": "#a8760b",
@@ -60,13 +60,16 @@ Esa última es la importante: es la red que impide romper los links compartidos 
     }
   ],
 
-  "codeOrder": ["water:base", "water:gold", "…"]   // ⚠️ APPEND-ONLY
+  "retired":   ["punk:gem", "fire:gem", "…"],      // posiciones reservadas
+  "codeOrder": ["water:base", "water:gold", "…"]   // APPEND-ONLY
 }
 ```
 
-`unreleased` es lo que separa el total real del total mostrado: hoy hay **139 entradas**
-de las cuales **127 ya salieron**. Las 12 pendientes aparecen atenuadas, no se pueden
-marcar y no cuentan en las estadísticas.
+Hoy el catálogo tiene **117 entradas vivas** en 25 sprites, más **22 posiciones reservadas**
+de entradas que resultaron no existir.
+
+`unreleased` marca variantes anunciadas que aún no están en el juego: aparecen atenuadas, no
+se pueden marcar y no cuentan en las estadísticas. Ahora mismo no hay ninguna.
 
 ## Cómo actualizar cuando salga contenido nuevo
 
@@ -103,6 +106,20 @@ Y sus 5 claves (`honey:base`, `honey:gold`, …) al final de `codeOrder`.
 
 Quita esa variante del array `unreleased`. Nada más. El contador sube solo.
 
+### Cuando una entrada resulta NO existir
+
+Pasa: una fuente lista una variante que el juego nunca sacó. **No borres su clave de
+`codeOrder`**, o correrás la posición de todo lo que va detrás y romperás los links ya
+compartidos.
+
+1. Quítala del array `variants` de su sprite (o borra el sprite entero si no existe ninguna).
+2. Añade su clave al array **`retired`**.
+
+`catalog.js` la tratará como una **posición reservada**: guarda un hueco en `codeIndex` para
+que todo lo posterior conserve su sitio, pero la entrada no aparece en la interfaz, no cuenta
+en las estadísticas y se ignora al importar un respaldo. Si te olvidas del paso 2, la
+validación te avisa en pantalla en vez de dejarte romper los códigos en silencio.
+
 ### Agregar un tipo de variante nuevo
 
 Añádelo al final del array `variants` de arriba del archivo, con su `color` y `color2`, y
@@ -110,7 +127,7 @@ sube `catalogVersion` en 1. **No hay que tocar el CSS**: los colores se inyectan
 
 ### Verificar que no rompiste nada
 
-Abre [`test.html`](../test.html) con Live Server. Debe decir **60 pasaron, 0 fallaron**.
+Abre [`test.html`](../test.html) con Live Server. Debe decir **62 pasaron, 0 fallaron**.
 Actualiza los totales esperados de la suite si cambiaste el conteo.
 
 ## Decisiones y por qué
@@ -129,6 +146,18 @@ archivos.
 de renderizar a medias y dejarte adivinando.
 
 ## Evolución
+
+### 2026-08-08 — Sesión 4
+- **`catalogVersion` → 3.** Se cotejó el catálogo contra fortnite.gg, que es la fuente
+  autoritativa, y **sobraban 22 entradas**: 17 variantes que ese sitio no lista y los 5
+  sprites de Season 4, que aún no existen. El total volvió a **117 en 25 sprites**, que es
+  justo lo que reportan los demás trackers.
+- **La reconciliación de la sesión 2 fue un error.** El `sprites-data.js` de fnsprites incluía
+  variantes especulativas, no un catálogo más al día. Las 12 entradas sin imagen que quedaron
+  entonces eran precisamente las que no existían: el síntoma estaba a la vista.
+- **Nuevo array `retired[]` y posiciones reservadas.** Retirar entradas ya no rompe los
+  códigos compartidos: su hueco se conserva en `codeIndex`.
+- Se eliminó la temporada `c7s4` y el filtro por temporada, que se quedó con una sola opción.
 
 ### 2026-08-08 — Sesión 2
 - **`catalogVersion` → 2.** Se añadió `codeOrder[]` y `catalog.codeIndex`, separando el

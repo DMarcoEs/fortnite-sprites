@@ -39,17 +39,16 @@ async function main() {
   for (const v of catalog.variantList) {
     $('#f-variant').append(new Option(v.name, v.id));
   }
-  for (const s of catalog.seasonList) {
-    $('#f-season').append(new Option(`${s.name} (C${s.chapter}S${s.season})`, s.id));
-  }
   $('#f-group').value = filters.groupBy;
   $('#f-sort').value = filters.sortBy;
 
   const pendientes = catalog.totalAll - catalog.totalReleased;
   $('#catalog-info').textContent =
     `Catalogo v${catalog.catalogVersion}: ${catalog.sprites.length} sprites y ` +
-    `${catalog.totalReleased} variantes lanzadas` +
-    (pendientes ? ` (+${pendientes} anunciadas que aun no salen).` : '.');
+    `${catalog.totalReleased} variantes` +
+    (pendientes ? `, mas ${pendientes} anunciadas que aun no salen. ` : '. ') +
+    `Hay ${catalog.retired.size} posiciones reservadas de entradas retiradas, ` +
+    `para que los links compartidos antiguos sigan funcionando.`;
 
   // --- Pintado ---
   const handlers = {
@@ -82,7 +81,6 @@ async function main() {
   bind('#search', 'search');
   bind('#f-rarity', 'rarity');
   bind('#f-variant', 'variant');
-  bind('#f-season', 'season');
   bind('#f-status', 'status');
   bind('#f-group', 'groupBy', 'groupBy');
   bind('#f-sort', 'sortBy', 'sortBy');
