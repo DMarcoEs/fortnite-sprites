@@ -210,7 +210,14 @@ try {
   // Estas 12 el repo de referencia aun no las publica: deben caer al fallback, no romper.
   const faltan = await Promise.all(['fishy-holofoil', 'aura-holofoil', 'batman-gem'].map(exists));
   check('las que faltan devuelven 404 (activan el fallback)', faltan.every(x => x === false), faltan.join(', '));
-  const totalImgs = (await Promise.all(cat.flat.map(e => exists(`${e.spriteId}-${e.variantId}`)))).filter(Boolean).length;
+  // Por lotes: 139 peticiones a la vez hacen que un CDN (GitHub Pages) estrangule
+  // parte de ellas y den falsos 404. De 8 en 8 el resultado es estable.
+  let totalImgs = 0;
+  for (let i = 0; i < cat.flat.length; i += 8) {
+    const lote = cat.flat.slice(i, i + 8);
+    const res = await Promise.all(lote.map(e => exists(`${e.spriteId}-${e.variantId}`)));
+    totalImgs += res.filter(Boolean).length;
+  }
   check('127 de 139 entradas tienen imagen', totalImgs === 127, totalImgs);
 
 } catch (err) {
