@@ -9,10 +9,14 @@ Cada archivo cubre **una función** del proyecto y sigue la misma estructura:
 
 Para la vista cronológica global ve al [CHANGELOG](../CHANGELOG.md).
 
+Para ponerte al día desde cero (puesta en marcha, arquitectura, reglas invariantes, trabajo
+pendiente y trampas conocidas), empieza por **[CONTEXTO.md](../CONTEXTO.md)**.
+
 ## Índice
 
 | Documento | De qué trata |
 |---|---|
+| [../CONTEXTO.md](../CONTEXTO.md) | **Punto de entrada.** Todo lo necesario para retomar el proyecto |
 | [catalogo.md](catalogo.md) | Modelo de datos y **cómo actualizarlo cada temporada** |
 | [coleccion.md](coleccion.md) | El checklist, los tres estados y el Mastery |
 | [filtros.md](filtros.md) | Búsqueda, filtros, agrupación y estadísticas |

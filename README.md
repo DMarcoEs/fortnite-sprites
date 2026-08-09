@@ -1,5 +1,9 @@
 # Sprite Tracker
 
+> **¿Acabas de clonar el repo o vuelves después de un tiempo?**
+> Empieza por **[CONTEXTO.md](CONTEXTO.md)**: puesta en marcha, arquitectura, las reglas que
+> no se pueden romper, trabajo pendiente y las trampas conocidas.
+
 Checklist para la colección de **Sprites de Fortnite**. Sin cuentas, sin servidor, sin costo.
 
 - **117 variantes** repartidas en **25 sprites**, cotejadas contra fortnite.gg.

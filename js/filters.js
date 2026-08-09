@@ -1,6 +1,6 @@
 // Busqueda, filtros, orden y calculo de estadisticas.
 
-import { NONE, OWNED, MASTERED } from './store.js';
+import { NONE, OWNED, MASTERED } from './store.js?v=4';
 
 export const defaultFilters = () => ({
   search: '',

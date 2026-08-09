@@ -4,12 +4,12 @@
 // navegadores NO mandan al servidor. Ni GitHub ve que sprites tienen.
 // Esta vista solo lee: nunca escribe sobre tu coleccion.
 
-import { loadCatalog } from './catalog.js';
-import * as store from './store.js';
-import { OWNED } from './store.js';
-import { encodeCollection, decodeCollection, buildShareUrl, codeFromLocation } from './share.js';
-import { toast, el, thumb } from './render.js';
-import { pct } from './filters.js';
+import { loadCatalog } from './catalog.js?v=4';
+import * as store from './store.js?v=4';
+import { OWNED } from './store.js?v=4';
+import { encodeCollection, decodeCollection, buildShareUrl, codeFromLocation } from './share.js?v=4';
+import { toast, el, thumb } from './render.js?v=4';
+import { pct } from './filters.js?v=4';
 
 const $ = sel => document.querySelector(sel);
 

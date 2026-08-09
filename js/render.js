@@ -4,8 +4,8 @@
 // ninguna parte, a proposito: asi no existe el patron que alguien pueda copiar
 // manana con datos que si vengan de fuera. Ver docs/seguridad.md.
 
-import { NONE, OWNED, MASTERED, getStatus, getEntry, isHunted, loadState } from './store.js';
-import { filterEntries, groupEntries, computeStats, pct } from './filters.js';
+import { NONE, OWNED, MASTERED, getStatus, getEntry, isHunted, loadState } from './store.js?v=4';
+import { filterEntries, groupEntries, computeStats, pct } from './filters.js?v=4';
 
 const STATUS_LABEL = { [NONE]: 'Me falta', [OWNED]: 'La tengo', [MASTERED]: 'Master' };
 

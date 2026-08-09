@@ -188,13 +188,24 @@ Se abrirá una ventana del navegador para iniciar sesión. Después, continúa d
 
 ## Publicar cambios después
 
+> **Si tocaste cualquier `.js`, sube antes el número de versión.** Cambia `?v=4` por `?v=5`
+> en los `import` de `js/*.js` y en los `<script src>` de `index.html`, `compare.html`,
+> `test.html` y `test-seed.html`.
+>
+> Sin eso, quien ya visitó el sitio puede quedarse con el JS viejo en caché mientras recibe
+> el JSON nuevo, y esa combinación muestra un banner rojo de errores de validación.
+
 ```powershell
 git add -A
 git commit -m "describe el cambio"
 git push
 ```
 
-Pages se reconstruye solo en ~1 minuto.
+Pages se reconstruye solo en ~1 minuto. Si se queda parado, se le puede pedir el build:
+
+```powershell
+gh api --method POST repos/DMarcoEs/fortnite-sprites/pages/builds
+```
 
 ## Comprobar que quedó bien
 
@@ -215,6 +226,8 @@ Pages se reconstruye solo en ~1 minuto.
 | `gh: command not found` | PATH sin refrescar | Cierra y reabre la terminal |
 | Push rechazado por exponer el correo | **El candado del paso 3.4 funcionando** | Configura la noreply y reescribe los commits |
 | `failed to push some refs` / rechazo por historial | Creaste el repo con README desde la web | Borra el repo remoto y créalo vacío, o `git pull --rebase` |
+| Banner rojo diciendo que `codeOrder` menciona claves inexistentes | Caché: JS viejo + JSON nuevo | Ctrl+F5. Se evita subiendo el `?v=` al publicar |
+| Pages se queda en "building" y la URL da 404 varios minutos | El constructor no arrancó | `gh api --method POST repos/.../pages/builds` |
 | 404 al abrir la URL | Pages aún construyendo | Espera 2 min y revisa **Actions** |
 | Carga sin estilos ni datos | Ruta mal resuelta | Verifica que Pages apunte a `/ (root)`, no a `/docs` |
 | Banner rojo de error | JSON del catálogo mal editado | El banner dice el problema exacto; ver [catalogo.md](catalogo.md) |

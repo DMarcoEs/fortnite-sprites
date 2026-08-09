@@ -1,10 +1,10 @@
 // Bootstrap de la vista principal: conecta catalogo, estado, filtros y DOM.
 
-import { loadCatalog } from './catalog.js';
-import * as store from './store.js';
-import { defaultFilters } from './filters.js';
-import { renderStats, renderGroups, renderHunt, renderHistory, toast } from './render.js';
-import { encodeCollection, buildShareUrl } from './share.js';
+import { loadCatalog } from './catalog.js?v=4';
+import * as store from './store.js?v=4';
+import { defaultFilters } from './filters.js?v=4';
+import { renderStats, renderGroups, renderHunt, renderHistory, toast } from './render.js?v=4';
+import { encodeCollection, buildShareUrl } from './share.js?v=4';
 
 const $ = sel => document.querySelector(sel);
 

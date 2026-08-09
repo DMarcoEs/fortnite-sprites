@@ -5,6 +5,42 @@ Para ver la evolución **por función** en vez de por fecha, ve a [docs/](docs/)
 
 ---
 
+## 2026-08-08 — Sesión 5: arreglo de caché y documento de traspaso
+
+### El banner rojo tras actualizar
+
+Al abrir el sitio salía una pantalla de errores diciendo que `codeOrder` menciona claves que
+no existen en `sprites[]`. **No era un fallo de los datos.**
+
+GitHub Pages sirve todo con `Cache-Control: max-age=600`, pero `catalog.js` pide el JSON con
+`cache: 'no-cache'`. Resultado: el navegador traía el **JSON nuevo** (con `retired[]`) y el
+**`catalog.js` viejo** de la caché, que no sabía qué era ese campo. Se confirmó comparando:
+el archivo publicado sí tenía el soporte; el mensaje en pantalla era el texto de la versión
+anterior.
+
+**Arreglo:** versionar las URLs de los módulos con `?v=4`, tanto en los `<script src>` como
+en cada `import` relativo. El JSON se queda con `no-cache` a propósito: los datos siempre
+frescos, el código se refresca al subir la versión, y ya no pueden desincronizarse.
+
+Queda como paso obligatorio del flujo de publicación, documentado en
+[docs/deploy.md](docs/deploy.md).
+
+### CONTEXTO.md
+
+Documento de entrada para retomar el proyecto desde otra computadora. Reúne lo que estaba
+disperso o solo en la cabeza:
+
+- Puesta en marcha en una máquina nueva, incluida la configuración obligatoria del correo
+  noreply antes del primer commit.
+- La arquitectura en cinco minutos, con el porqué de los dos órdenes (`flat` y `codeIndex`).
+- Las cuatro reglas invariantes del proyecto.
+- Recetas para actualizar el catálogo, agregar imágenes, probar y publicar.
+- **Historial de decisiones y errores**, incluido por qué el catálogo se corrompió al confiar
+  en la fuente equivocada y qué señal se ignoró.
+- Trabajo pendiente y trampas conocidas.
+
+---
+
 ## 2026-08-08 — Sesión 4: catálogo corregido, rediseño y sin emojis
 
 ### El catálogo tenía 22 entradas que no existen

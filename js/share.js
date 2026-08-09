@@ -7,7 +7,7 @@
 // viejo (mas corto) sigue decodificando bien: los bytes que faltan valen 0, y las
 // entradas que se agregaron despues simplemente salen como "no la tengo".
 
-import { NONE, MASTERED } from './store.js';
+import { NONE, MASTERED } from './store.js?v=4';
 
 function bytesToBase64Url(bytes) {
   let bin = '';
